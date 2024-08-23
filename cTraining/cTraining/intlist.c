@@ -12,33 +12,24 @@
 			  Remove – removes the first occurrence of a specific element.
 			  Count – number of elements in the list.
 			  Get – gets the element at a particular index.
-			  in this all function return 0 and 1 are process is not completed and completed
+			  in this all function return 0 and 1 are process is incompleted and completed
 
 */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "intlist.h"
 
-//create node structure 
-typedef struct node {
-	int data;
-	struct node* nextPtr;
-}Node;
-
-
-int num;
-
-int* process;
-int* del=&process;
 
 
 //Create – this will create a new linked list.
-Node* Create () {
-
-	Node* head = NULL;
-	*del = 2;
-	return head;
+LinkedList* Create () {
+	LinkedList* pointer = (LinkedList*)malloc (sizeof (LinkedList));
+	pointer->head = NULL;
+	pointer->del = false;
+	pointer->count = 0;
+	return pointer;
 }
 
 
@@ -46,30 +37,30 @@ Node* Create () {
 /*this function  add the elements in list at end ,by using the pointer .
 if the head is null,store the newnode pointer in head pointer,
 otherwise go through the list get the last node and next pointer, store the newnode next pointer*/
-int Add (Node** head,int num) {
+int Add (LinkedList* list, int num) {
 
 	Node* newNode = (Node*)malloc (sizeof (Node)); //memory allocation for newnode,it's can store data and pointer.
-	if (newNode == NULL) {
-		printf ("error:memory allocation is failed\n");
-		return;
-	}
 
 	//if the list is deleted once or more times ,can't add the elements in list
-	if (*del < 2) {
-		printf ("error:List is deleted,can't add\n");
-		return 0;
-	}
+	if (list->del == true) {
+		return LIST_DELETED;
+	};
+
+	if (newNode == NULL) {
 	
-	
+		return MEMORY_ALLOCATION_FAILED;
+	};
+
 	newNode->data = num; //store the value in the new Node
 	newNode->nextPtr = NULL; //store the new node next pointer is null ,we adding the element at last
 
-	
-	if (*head == NULL) {
-		*head = newNode;
-	
+
+	if (list->head == NULL) {
+		list->head = newNode;
+		list->count++;
+
 	} else {
-		Node* temp = *head;
+		Node* temp = list->head;
 
 		while (temp->nextPtr != NULL) {
 
@@ -77,9 +68,11 @@ int Add (Node** head,int num) {
 
 		}
 		temp->nextPtr = newNode;
-		
+		list->count++;
+
 	}
-	return 1;
+	return 0;
+
 }
 
 //Insert – this will insert an element at a particular index (zero based).
@@ -89,228 +82,233 @@ int Add (Node** head,int num) {
 /*this function insert node at index .in this function go throgth the list and get previous node next pointer for give index node,
 which is pointer to the newnode and also it's stored the index position next node data in the list ,
 so newnode next pointer store the the previous node next pointer and the previous node next pointer store the newnode  */
-int Insert (Node**head,int index, int num) {
+int Insert (LinkedList* list, int index, int num) {
+
+	//if the list is deleted once or more times ,can't Insert the elements in list
+
+	if (list->del == true) {
+		return  LIST_DELETED;
+	};
 
 	Node* newNode = (Node*)malloc (sizeof (Node));
 	if (newNode == NULL) {
-		printf ("error:memory allocation is failed\n");
-		return;
+		return MEMORY_ALLOCATION_FAILED;
 	}
-	//if the list is deleted once or more times ,can't Insert the elements in list
-	if (*del < 2) {
-		printf ("error:List is deleted,can't insert\n");
-		return 0;
+	
+
+	if (list->head == NULL) {
+		
+		return EMPTY_LIST;
 	}
 
-	if (*head == NULL) {
-		printf ("error:Empty list\n");
-		return 0;
-	}
 	
-	
-	Node* temp = *head;
-	int count = Count (&temp);
-	if (count <= index) {
-		printf ("error:Index out of range\n");
-		return 0;
+	if (list->count <= index) {
+		
+		return INDEX_OUTOF_RANGE;
 	}
 	newNode->data = num;
 	if (index == 0) {
 		//insert at begining
-		newNode->nextPtr = *head;
-		*head = newNode;
-		
+		newNode->nextPtr = list->head;
+		list->head = newNode;
+		list->count++;
+
 	} else {
-		
-		Node* prev = *head;
+
+		Node* prev = list->head;
 		for (int i = 1; i < index; i++) {
 			prev = prev->nextPtr;
 		}
 		newNode->nextPtr = prev->nextPtr;
 		prev->nextPtr = newNode;
-		
+		list->count++;
+
 	}
 	return 0;
+	
 }
 
 //RemoveAt – this will remove the element at a particular index (zero based).
 /*this function remove the node at the index, same as insertat function, but in this function we need previous and index node,
-because index node which store the next node pointer and this pointer must be store in previous node nextpointer.*/
-void RemoveAt (Node** head,int index) {
+//because index node which store the next node pointer and this pointer must be store in previous node nextpointer.*/
+int RemoveAt (LinkedList* list, int index) {
 
-	if (*head == NULL) {
-		printf ("error:Empty is list\n");
-		return;
+	if (list->del == true) {
+		return  LIST_DELETED;
+	};
+
+	if (list->head == NULL) {
+		
+		return EMPTY_LIST;
 	}
-	Node* temp = *head;
-	int count = Count (&temp);
-	
-	if (count <= index) {
-		printf ("error:Index out of range\n");
-		return;
+
+	//int count = Count (list);
+
+	if (list->count <= index) {
+		return INDEX_OUTOF_RANGE;
 	}
 	if (index == 0) {
-		
-		Node* temp = *head;
-		Node*var=temp->nextPtr;
+
+		Node* temp = list->head;
+		Node* var = temp->nextPtr;
 		free (temp);
-		*head = var;
-		
+		list->head = var;
+		list->count--;
+
 	} else {
-		Node* prev = *head;
+		Node* prev = list->head;
 		for (int i = 1; i < index; i++) {
 			prev = prev->nextPtr;
 		}
-		Node* atPos = *head;
+		Node* atPos = list->head;
 		for (int j = 1; j <= index; j++) {
 			atPos = atPos->nextPtr;
 		}
 		prev->nextPtr = atPos->nextPtr;
 		free (atPos);
-		
-	}
-}
+		list->count--;
 
-//Remove – removes the first occurrence of a specific element.
-/*this function remove the first occurrence of a given Element by compare the give element with each elements in list ,
-find element node and also it'f get the previous node.then it's store the element node next pointer in previous node next pointer*/
-int Remove (Node**head,int num) {
-	Node* temp = *head;
-	int count = Count (&temp);
-	if (*head == NULL) {
-		printf ("error:Empty list\n");
-		return 0;
 	}
+	return 0;
 	
-	Node* var = *head;
+}
+//
+////Remove – removes the first occurrence of a specific element.
+///*this function remove the first occurrence of a given Element by compare the give element with each elements in list ,
+//find element node and also it'f get the previous node.then it's store the element node next pointer in previous node next pointer*/
+int Remove (LinkedList* list, int num) {
+
+	if (list->del == true) {
+		return  LIST_DELETED;
+	};
+
+	
+	if (list->head == NULL) {
+		
+		return EMPTY_LIST;
+	}
+
+	
+
+	Node* var = list->head;
 	if (var->data == num) {
 		Node* temp = var->nextPtr;
 		free (var);
-		*head = temp;
-		
+		list->head = temp;
+		list->count--;
+
 	} else {
-		Node* atPos = *head;
+		Node* atPos = list->head;
 		Node* temp = NULL;
 		int j = 0;
-		for (j; j <= count; j++) {
+		for (j; j <= list->count; j++) {
 			if (atPos->data == num) {
 
 				break;
 			}
 			atPos = atPos->nextPtr;
 		}
-		Node* prev = *head;
+		Node* prev = list->head;
 		for (int k = 0; k < j - 1; k++) {
 			prev = prev->nextPtr;
 		}
 		prev->nextPtr = atPos->nextPtr;
 		free (atPos);
-		
+		list->count--;
+
 	}
-	return 1;
+	return 0;
 }
 ////Display-it's display the list elements
-void Display (Node** head) {
-	
-	
-	if (*head == NULL) {
-		printf ("error:Empty list\n");
-		return;
+void Display (LinkedList* list) {
+
+	if (list->del == true) {
+		return LIST_DELETED;
+	};
+	if (list->head == NULL) {
+		return EMPTY_LIST;
 	} else {
-		Node* temp = *head;
-		printf ("error:List elements:\n");
+		Node* temp = list->head;
+		
 		while (temp != NULL) {
-			printf ("%d\n", temp->data);
+			printf ("\n%d\n", temp->data);
 			temp = temp->nextPtr;
 		}
 	}
-	
+
 }
 //Count – number of elements in the list.
-int Count(Node** head) {
-	if (*head == NULL) {
-		return 0;
+int Count (LinkedList* list) {
+	if (list->del == true) {
+		return  LIST_DELETED;
 	}
 	else {
-		int length = 0;
-		Node* temp = *head;
-		while (temp != NULL) {
-
-			temp = temp->nextPtr;
-			length++;
-		}
-		
-		return length;
-	
+		return list->count;
 	}
-	
+
+
 }
 
 
 
 
-//Get – gets the element at a particular index position from header pointer Element to index.
-int Get (Node**head,int index) {
+////Get – gets the element at a particular index position from header pointer Element to index.
+int Get (LinkedList* list, int index, int* value) {
 
-	if (*head == NULL) {
-		printf ("error:Empty list\n");
-		return 0;
+	if (list->del == true) {
+		return LIST_DELETED;
+	};
+
+	if (list->head == NULL) {
+		return EMPTY_LIST;
 	}
-	Node* temp = *head;
-	int count = Count (&temp);
-	if (count <= index) {
-		printf ("error:Index out of range\n");
-		return 0;
+	
+	if (list->count <= index) {
+		return INDEX_OUTOF_RANGE;
 	}
 	if (index == 0) {
-		Node* atPos = *head;
+		Node* atPos = list->head;
 		for (int j = 1; j <= index; j++) {
 			atPos = atPos->nextPtr;
 		}
 		return atPos->data;
 	} else {
-		Node* atPos = *head;
+		Node* atPos = list->head;
 		for (int j = 1; j <= index; j++) {
 			atPos = atPos->nextPtr;
 		}
-		return atPos->data;
+		*value= atPos->data;
+		return 0;
 		
 	}
 }
 
 //Delete – this will delete the list and all the linked elements.
 
-int Delete (Node** head) {
-	
-	Node* ptr = *head;
-	int count = Count (&ptr);
-	if (*head == NULL) {
-		free (*head);
-		
+int Delete (LinkedList* list) {
 
-	} else{
-		Node* temp = *head;
+	if (list->del == true) {
+		return  LIST_DELETED;
+	};
+
+	
+	if (list->head == NULL) {
+		free (list->head);
+	} else {
+		Node* temp = list->head;
 		while (temp != NULL) {
 			int* temp1 = temp->nextPtr;
 			free (temp);
-			count--;
+			list->count--;
 			temp = temp1;
 		}
 		free (temp);
-		
+
 	}
-	
-	(*del) -= 1;
-	if (*del == 1) {
-		
-		return 1;
-	}
-	else {
-		printf ("error:List is already deleted\n");
-		return 0;
-	}
-	
-	
+
+	list->del = true;
+	return 0;
+
 }
 
 
