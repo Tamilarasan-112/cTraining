@@ -12,7 +12,7 @@ int main () {
 	printf ("Expected: 3\n");
 	printf ("Output: %d\n", Count (list1));
 	Delete (list1);
-	
+
 	//case2: Create the Linked List, add values,get count and remove values based on index
 	printf ("\nCase 2:\n");
 	LinkedList* list2 = Create ();
@@ -21,12 +21,10 @@ int main () {
 	Add (list2, 30);
 	printf ("Expected: 0\n");
 	int length = Count (list2);
-	for (int i = 0; i < length; i++) {
-		RemoveAt (list2, 0);
-	}
+	for (int i = 0; i < length; i++) RemoveAt (list2, 0);
 	printf ("Output: %d\n", Count (list2));
 	Delete (list2);
-	
+
 	//case3: Create the Linked List, delete list 2 times
 	printf ("\nCase 3:\n");
 	LinkedList* list3 = Create ();
@@ -37,7 +35,7 @@ int main () {
 	printf ("Expected:-1011\n");
 	int m = Delete (list3);
 	printf ("Output2: ");
-	printf ("%d\n", m); 
+	printf ("%d\n", m);
 
 	//case4: Create the Linked List, delete list and try to insert, add values to list
 	printf ("\nCase 4:\n");
@@ -65,18 +63,18 @@ int main () {
 
 	//case7: Create the Linked List and get values based on index
 	printf ("\nCase 7:\n");
-	LinkedList* list6= Create ();
+	LinkedList* list6 = Create ();
 	Add (list6, 10);
 	Add (list6, 20);
 	Add (list6, 30);
 	printf ("Expected: 20\n");
 	int value;
-	int a = Get (list6, 1,&value);
+	int a = Get (list6, 1, &value);
 	if (a == 0) {
 		printf ("\nSuccessful\n");
 		printf ("\nFrom get func : %d\n", value);
 	} else {
-		printf ("Unsuccessfull\n");
+		printf ("Unsuccessful\n");
 		printf ("error:%d\n", a);
 	}
 	Delete (list6);
@@ -86,12 +84,12 @@ int main () {
 	LinkedList* list7 = Create ();
 	printf ("Expected: -1012\n");
 	int value2;
-	int b = Get (list7, 1,&value2);
+	int b = Get (list7, 1, &value2);
 	if (b == 0) {
 		printf ("Successful\n");
 		printf ("\nFrom get func : %d\n", value2);
 	} else {
-		printf ("Unsuccessfull\n");
+		printf ("Unsuccessful\n");
 		printf ("error:%d\n", b);
 	}
 	Delete (list7);
@@ -107,14 +105,13 @@ int main () {
 	if (Get (list8, 4, &value3) == 0) {
 		printf ("Successful\n");
 		printf ("\nFrom get func : %d\n", value3);
-	}
-	else {
-		printf ("Unsuccessfull\n");
+	} else {
+		printf ("Unsuccessfully\n");
 		printf ("error:%d\n", Get (list8, 4, &value3));
 	}
 	Delete (list8);
 
-	//case10: Create a Linked List, add same values and remove the first occurence
+	//case10: Create a Linked List, add same values and remove the first occurrence
 	printf ("\nCase 10:\n");
 	LinkedList* list9 = Create ();
 	Add (list9, 100);
@@ -136,19 +133,18 @@ int main () {
 	printf ("Output: %d\n", d);
 	Delete (list10);
 
-	//case12:Add the element in new list ,after deleted onother list
+	//case12:Add the element in new list ,after deleted on other list
 	printf ("\nCase 12:\n");
 	LinkedList* list11 = Create ();
 	LinkedList* list12 = Create ();
 	Delete (list12);
-	int x=Add (list11, 1);
-	if (x == 0)printf ("\nAdded successfully\n");  
+	int x = Add (list11, 1);
+	if (x == 0)printf ("\nAdded successfully\n");
 
 	//case13:
 	printf ("\nCase 13:\n");
 	LinkedList* head = Create ();
 	LinkedList* head2 = Create ();
-	
 	int i = Add (head, 3);
 	if (i == 0) printf ("\nsuccessful\n");
 	Add (head, 3);
@@ -157,15 +153,23 @@ int main () {
 	Add (head2, 4);
 	int value4;
 	if (Get (head, 1, &value4) == 0)printf ("Successful\n");
-	printf ("\nFrom get func : %d\n",value4);
-
+	printf ("\nFrom get func : %d\n", value4);
 	Delete (head2);
 	Insert (head, 2, 0);
 	Add (head, 4);
 	Insert (head, 6, 2);
 	Count (head);
-	printf("expected:-1015\noutput:%d\n",Remove (head, 5));
+	printf ("expected:-1015\noutput:%d\n", Remove (head, 5));
 	RemoveAt (head, 0);
 	Remove (head, 4);
 	Count (head);
+
+	//case14/:try to add  before create the List
+	printf ("\ncase:14\n");
+	LinkedList* list = NULL;
+	int B = Add (list, 1);
+	if (B == 0)printf ("Successful\n");
+	else {
+		printf ("unsuccessful:%d", B);
+	}
 }

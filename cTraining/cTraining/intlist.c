@@ -31,8 +31,9 @@ LinkedList* Create () {
 }
 
 int Add (LinkedList* list, int num) {
-	Node* newNode = (Node*)malloc (sizeof (Node)); //memory allocation for newnode,it's can store data and pointer.
+	Node* newNode = (Node*)malloc (sizeof (Node)); //memory allocation for new node,it's can store data and pointer.
 	//if the list is deleted once or more times ,can't add the elements in list
+	if (list == NULL)return LIST_NOT_CREATED;//if there is no memory allocated and that memory address is null ,the list is not created  
 	if (list->del) return LIST_DELETED;
 	if (newNode == NULL) return MEMORY_ALLOCATION_FAILED;
 	newNode->data = num; //store the value in the new Node
@@ -49,6 +50,7 @@ int Add (LinkedList* list, int num) {
 
 int Insert (LinkedList* list, int index, int num) {
 	//if the list is deleted once or more times ,can't Insert the elements in list
+	if (list == NULL)return LIST_NOT_CREATED;
 	if (list->del) return  LIST_DELETED;
 	Node* newNode = (Node*)malloc (sizeof (Node));
 	if (newNode == NULL) return MEMORY_ALLOCATION_FAILED;
@@ -56,7 +58,7 @@ int Insert (LinkedList* list, int index, int num) {
 	if (list->count <= index || index < 0) return INDEX_OUTOF_RANGE;
 	newNode->data = num;
 	if (index == 0) {
-		//insert at begining
+		//insert at beginning
 		newNode->nextPtr = list->head;
 		list->head = newNode;
 	} else {
@@ -70,6 +72,7 @@ int Insert (LinkedList* list, int index, int num) {
 }
 
 int RemoveAt (LinkedList* list, int index) {
+	if (list == NULL)return LIST_NOT_CREATED;
 	if (list->del) return  LIST_DELETED;
 	if (list->head == NULL) return EMPTY_LIST;
 	if (list->count <= index || index < 0) return INDEX_OUTOF_RANGE;
@@ -91,6 +94,7 @@ int RemoveAt (LinkedList* list, int index) {
 }
 
 int Remove (LinkedList* list, int num) {
+	if (list == NULL)return LIST_NOT_CREATED;
 	if (list->del) return  LIST_DELETED;
 	if (list->head == NULL) return EMPTY_LIST;
 	Node* var = list->head;
@@ -117,12 +121,14 @@ int Remove (LinkedList* list, int num) {
 }
 
 int Count (LinkedList* list) {
+	if (list == NULL)return LIST_NOT_CREATED;
 	if (list->del) {
 		return LIST_DELETED;
 	} else return list->count;
 }
 
 int Get (LinkedList* list, int index, int* value) {
+	if (list == NULL)return LIST_NOT_CREATED;
 	if (list->del) return LIST_DELETED;
 	if (list->head == NULL) return EMPTY_LIST;
 	if (list->count <= index) return INDEX_OUTOF_RANGE;
@@ -139,6 +145,7 @@ int Get (LinkedList* list, int index, int* value) {
 }
 
 int Delete (LinkedList* list) {
+	if (list == NULL)return LIST_NOT_CREATED;
 	if (list->del)return  LIST_DELETED;
 	if (list->head == NULL) free (list->head);
 	else {
