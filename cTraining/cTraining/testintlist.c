@@ -1,9 +1,7 @@
-#include "intlist.h";
-#include <stdbool.h>;
-
+#include "intlist.h"
+#include  <stdio.h>
 
 int main () {
-
 	/*Testcases for LinkedList
 	case1: Create the Linked List, add 3 values and print count*/
 	printf ("\nCase 1:\n");
@@ -14,7 +12,6 @@ int main () {
 	printf ("Expected: 3\n");
 	printf ("Output: %d\n", Count (list1));
 	Delete (list1);
-
 	
 	//case2: Create the Linked List, add values,get count and remove values based on index
 	printf ("\nCase 2:\n");
@@ -82,11 +79,9 @@ int main () {
 		printf ("Unsuccessfull\n");
 		printf ("error:%d\n", a);
 	}
-	
 	Delete (list6);
 
 	//case8: Create an empty Linked List and try to get values based on index
-
 	printf ("\nCase 8:\n");
 	LinkedList* list7 = Create ();
 	printf ("Expected: -1012\n");
@@ -99,7 +94,6 @@ int main () {
 		printf ("Unsuccessfull\n");
 		printf ("error:%d\n", b);
 	}
-	
 	Delete (list7);
 
 	//case9: Create a Linked List and try to get values exceeding index range
@@ -150,9 +144,6 @@ int main () {
 	int x=Add (list11, 1);
 	if (x == 0)printf ("\nAdded successfully\n");  
 
-
-
-
 	//case13:
 	printf ("\nCase 13:\n");
 	LinkedList* head = Create ();
@@ -168,22 +159,13 @@ int main () {
 	if (Get (head, 1, &value4) == 0)printf ("Successful\n");
 	printf ("\nFrom get func : %d\n",value4);
 
-	Delete (head);
 	Delete (head2);
 	Insert (head, 2, 0);
 	Add (head, 4);
 	Insert (head, 6, 2);
 	Count (head);
-	Remove (head, 6);
+	printf("expected:-1015\noutput:%d\n",Remove (head, 5));
 	RemoveAt (head, 0);
 	Remove (head, 4);
 	Count (head);
-
-	//case14:
-   LinkedList* list13 = Create ();
-	LinkedList* list14 = Create ();
-	Delete (list13);
-	printf("%d\n",Add (list13, 1));
-	printf ("%d\n", Insert (list13, 0, 1));
-	
 }
