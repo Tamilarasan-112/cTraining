@@ -1,12 +1,41 @@
 #include<stdio.h>
 #include<math.h>
-#include "converter.h"
 long int i;
 long int h;
 long int arr[128];
 int rev[128];
 long long int n;
 void Hex (long int  n, int* ptr);
+
+/// <summary>This function get the decimal value from user and display the Binary and Hexadecimal value for the given decimal value.</summary>
+void BinaryHex (long long int n);
+
+int main () {
+	//case:pass the decimal value
+	printf ("Important:\n");
+	printf ("Please Enter the Number only!\n");
+	printf ("Please don't enter more then 12 digits number!");
+	long long int n;
+	char c;
+	int i = 1;
+	int a = 0;
+	int* p = &a;
+	do {
+		printf ("\nCase%d:\n", i);
+		printf ("Input:");
+		*p = scanf_s ("%lld", &n);
+		if (*p != 0) {
+			if (n == 0) {
+				printf ("Binary:%d\n", 0);
+				printf ("Hex:%d", 0);
+			} else {
+				printf ("output:");
+				BinaryHex (n);
+			}
+		} else printf ("Invalid!");
+		i++;
+	} while ((*p) == 1);
+}
 
 void BinaryHex (long long int n) {
 	printf ("\n");

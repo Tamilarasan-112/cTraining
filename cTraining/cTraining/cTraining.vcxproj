@@ -128,10 +128,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="converter.c" />
-    <ClCompile Include="testintlist.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="converter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
