@@ -1,11 +1,14 @@
 #include<stdio.h>
 #include<math.h>
 #include<stdbool.h>
+#include<ctype.h>
+#include<stdlib.h>
+#include<malloc.h>
 long int i;
 long int h;
 long int arr[128];
-int rev[128];
-long long int n;
+long int rev[128];
+long long int n=1;
 void Hex (long long int  n, int* ptr);
 
 /// <summary>This function get the decimal value from user and display the Binary and Hexadecimal value for the given decimal value.</summary>
@@ -15,30 +18,50 @@ int main () {
 	//case:pass the decimal value
 	printf ("Important:\n");
 	printf ("Please Enter the Number only!\n");
-	printf ("Please don't enter more then 12 digits number!");
-	long long int n;
+	printf ("Please don't enter more then 11 digits number!");
+	printf ("If you want to exit enter [q]");
 	char c;
-	int i = 1,a = 0;
-	int* p = &a;
-	do {
-		printf ("\nCase%d:\n", i);
-		printf ("Input:");
-		*p = scanf_s ("%lld", &n);
-		if (*p != 0) {
-			if (n == 0) {
-				printf ("Binary:%d\n", 0);
-				printf ("Hex:%d", 0);
-			} else {
-				printf ("output:");
-				BinaryAndHexConverter (n);
+	char arr[100];
+	int i = 0;
+	printf ("\n");
+	const char* str = arr;
+	char* endptr=NULL;
+	int it = 0;
+	printf ("Input:");
+	while ((c = getchar ()) != 'q') {
+		bool Inv = false;
+		arr[i] = c;
+		int key = 0;
+		if ((c == '\n')) {
+			for (int j = 0; j <= i; j++) {
+				if (isalpha (arr[j])|| arr[0] == '\n'||ispunct(arr[j])||arr[j]==' '||i>12) {
+					if (arr[0] == '-') continue;
+					else {
+						Inv = true;
+						break;
+					}
+				}	
 			}
-		} else printf ("Invalid!");
+			if (Inv) {
+				printf ("Invalid!\n");
+				const int n = 0;
+			}
+			else {
+				n = strtoll(str,&endptr,10);
+				if (n == 0) {
+					printf ("Binary:%d\n", 0);
+					printf ("HEX:%d\n", 0);
+				} else BinaryAndHexConverter (n);
+			}
+			i = -1;
+		}
 		i++;
-	} while ((c=getchar())!='q');
+		it = 1;
+		if (i==0 && it > 0) printf ("Input:");
+	}
 }
 
 void BinaryAndHexConverter (long long int n) {
-	printf ("\n");
 	i = 0;
 	long long int temp= n,m = 0;
 	//if the given integer is signed value 
@@ -111,7 +134,7 @@ void BinaryAndHexConverter (long long int n) {
 			}
 		}
 		//if the digit is 64 or less then 64
-		else {
+		else if(i<=63 && i>=32) {
 			int j = 0,z;
 			for (j; j < 64 - i; j++) arr[j] = 1;
 			for (int x = 0; x < i; x++) {
@@ -195,4 +218,5 @@ void Hex (long long int  n,int *ptr) {
 			stepin = 1;
 		}
 	}
+	printf ("\n");
 }
