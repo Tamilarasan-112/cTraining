@@ -35,7 +35,7 @@ int main () {
 		if ((c == '\n')) {
 			for (int j = 0; j <= i; j++) {
 				if (isalpha (arr[j])|| arr[0] == '\n'||ispunct(arr[j])||arr[j]==' '||i>12) {
-					if (arr[0] == '-') continue;
+					if (arr[0] == '-'&&(!isalpha(arr[j])))continue;
 					else {
 						Inv = true;
 						break;
@@ -76,8 +76,8 @@ void BinaryAndHexConverter (long long int n) {
 			i++;
 		}
 		for (int a = i-1 , b = 0; b <= i-1 ; b++, a--) {
-			if (arr[a] == 0) rev[b] = 1;
-			else rev[b] = 0;
+			//(arr[a] == 0)? rev[b] = 1:rev[b] = 0;
+			rev[b] = (arr[a] == 0) ? 1 : 0;
 		}
 		//if the digit is 8 or less then 8
 		if (i <=7 && i >= 0) {
