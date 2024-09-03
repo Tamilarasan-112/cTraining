@@ -100,9 +100,8 @@ int main () {
 	Add (list8, 100);
 	Add (list8, 200);
 	Add (list8, 300);
-	printf ("Expected: -1013\n");
 	int value3;
-	if (Get (list8, 4, &value3) == 0) {
+	if (Get (list8, 0, &value3) == 0) {
 		printf ("Successful\n");
 		printf ("\nFrom get func : %d\n", value3);
 	} else {
@@ -170,6 +169,12 @@ int main () {
 	int B = Add (list, 1);
 	if (B == 0)printf ("Successful\n");
 	else {
-		printf ("unsuccessful:%d", B);
+		printf ("unsuccessful:%d\n", B);
 	}
+	
+	printf ("\ncase:15\n");
+	LinkedList* list13 = Create();
+	int ts = Insert (list13, 0, 1);
+	if (ts == 0)printf ("successful\n");
+	else printf ("Unsuccessful\n");
 }

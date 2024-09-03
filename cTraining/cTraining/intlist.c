@@ -20,28 +20,25 @@
 
 LinkedList* Create () {
 	LinkedList* pointer = (LinkedList*)malloc (sizeof (LinkedList));
-	do {
-		if (pointer != NULL) {
-			pointer->head = NULL;
-			pointer->del = false;
-			pointer->count = 0;
-		}
-	} while (pointer == NULL);
+	if(pointer!=NULL){
+		pointer->head = NULL;
+		pointer->del = false;
+		pointer->count = 0;
+	}
 	return pointer;
 }
 
 int Add (LinkedList* list, int num) {
-	Node* newNode = (Node*)malloc (sizeof (Node)); //memory allocation for new node,it's can store data and pointer.
-	//if the list is deleted once or more times ,can't add the elements in list
 	if (list == NULL)return LIST_NOT_CREATED;//if there is no memory allocated and that memory address is null ,the list is not created  
-	if (list->del) return LIST_DELETED;
+	if (list->del) return LIST_DELETED;//if the list is deleted once or more times ,can't add the elements in list
+	Node* newNode = (Node*)malloc (sizeof (Node)); //memory allocation for new node,it's can store data and pointer.
 	if (newNode == NULL) return MEMORY_ALLOCATION_FAILED;
 	newNode->data = num; //store the value in the new Node
 	newNode->nextPtr = NULL; //store the new node next pointer is null ,we adding the element at last
 	if (list->head == NULL) list->head = newNode;
 	else {
 		Node* temp = list->head;
-		while (temp->nextPtr) temp = temp->nextPtr;
+		while (temp->nextPtr!=NULL) temp = temp->nextPtr;
 		temp->nextPtr = newNode;
 	}
 	list->count++;
@@ -49,13 +46,11 @@ int Add (LinkedList* list, int num) {
 }
 
 int Insert (LinkedList* list, int index, int num) {
-	//if the list is deleted once or more times ,can't Insert the elements in list
 	if (list == NULL)return LIST_NOT_CREATED;
-	if (list->del) return  LIST_DELETED;
+	if (list->del) return  LIST_DELETED;	//if the list is deleted once or more times ,can't Insert the elements in list
 	Node* newNode = (Node*)malloc (sizeof (Node));
 	if (newNode == NULL) return MEMORY_ALLOCATION_FAILED;
-	if (list->head == NULL) return EMPTY_LIST;
-	if (list->count <= index || index < 0) return INDEX_OUTOF_RANGE;
+	if (list->count < index || index < 0) return INDEX_OUTOF_RANGE;
 	newNode->data = num;
 	if (index == 0) {
 		//insert at beginning
@@ -132,16 +127,11 @@ int Get (LinkedList* list, int index, int* value) {
 	if (list->del) return LIST_DELETED;
 	if (list->head == NULL) return EMPTY_LIST;
 	if (list->count <= index) return INDEX_OUTOF_RANGE;
-	if (index == 0) {
-		Node* atPos = list->head;
-		for (int j = 1; j <= index; j++) atPos = atPos->nextPtr;
-		return atPos->data;
-	} else {
-		Node* atPos = list->head;
-		for (int j = 1; j <= index; j++)atPos = atPos->nextPtr;
-		*value = atPos->data;
-		return 0;
-	}
+	Node* atPos = list->head;
+	if (index == 0) for (int j = 1; j <= index; j++) atPos = atPos->nextPtr;
+	else for (int j = 1; j <= index; j++)atPos = atPos->nextPtr;
+	*value = atPos->data;
+	return 0;
 }
 
 int Delete (LinkedList* list) {
