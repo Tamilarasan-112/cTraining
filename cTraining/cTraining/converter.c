@@ -3,22 +3,23 @@
 #include<stdbool.h>
 #include<ctype.h>
 #include<stdlib.h>
-#include<malloc.h>
 long int i;
 long int h;
 long int arr[128];
 long int rev[128];
-long long int n=1;
+long long int  n=1;
 void Hex (long long int  n, int* ptr);
 
 /// <summary>This function get the decimal value from user and display the Binary and Hexadecimal value for the given decimal value.</summary>
 void BinaryAndHexConverter (long long int n);
 
+void TwosComplement (int* i, int* x1, int* x2,int onoff);
+
 int main () {
 	//case:pass the decimal value
 	printf ("Important:\n");
-	printf ("Please Enter the Number only!\n");
-	printf ("Please don't enter more then 11 digits number!");
+	printf ("Please Enter a Number only!\n");
+	printf ("Please don't enter more than 11 digits number!");
 	printf ("If you want to exit enter [q]");
 	char c;
 	char arr[100];
@@ -72,7 +73,7 @@ void BinaryAndHexConverter (long long int n) {
 		//converted to binary
 		while (n > 0) {
 			arr[i] = n % 2;
-			n = round (n / 2);
+			n = (long long int)(round ((double)(n / 2)));
 			i++;
 		}
 		for (int a = i-1 , b = 0; b <= i-1 ; b++, a--) {
@@ -81,75 +82,21 @@ void BinaryAndHexConverter (long long int n) {
 		}
 		//if the digit is 8 or less then 8
 		if (i <=7 && i >= 0) {
-			int j = 0,z;
-			//span and invert(1's compliment)
-			for (j; j <= 7 - i; j++) arr[j] = 1;
-			for (int x = 0; x < i; x++) {
-				arr[j++] = rev[x];
-				h = j-1 ;
-				z = h;
-			}
-			//add 1 at last digit(2's compliment)
-			if (z == 7) {
-				if ((arr[z] == 1)) {
-					while (((arr[z] += 1) == 2)) {
-						arr[z] = 0;
-						z--;
-					}
-				} else arr[h] = 1;
-			}
+			int x1 = 7, x2 = 0;
+			TwosComplement (&i, &x1, &x2,1);
 		//if the digit is 16 or less then 16
 		} else if (i <= 15 && i >= 8) {
-		   int j = 0,z ;
-			for (j; j < 16 - i; j++) arr[j] = 1;
-			for (int x = 0; x < i; x++) {
-				arr[j++] = rev[x];
-				h = j-1 ;
-				z = h;
-			}
-			if (z == 15) {
-				if ((arr[z] == 1)) {
-					while (((arr[z] += 1) == 2)) {
-						arr[z] = 0;
-						z--;
-					}
-				} else arr[h] = 1;
-			}
+			int x1 = 15, x2 = 8;
+			TwosComplement (&i, &x1, &x2,1);
 		//if the digit is 16 or less then 16
 		} else if (i <= 31 && i >= 16) {
-			int j = 0,z;
-			for (j; j < 32 - i; j++) arr[j] = 1;
-			for (int x = 0; x < i; x++) {
-				arr[j++] = rev[x];
-				h = j-1 ;
-				z = h;
-			}
-			if (z == 31) {
-				if ((arr[z] == 1)) {
-					while (((arr[z] += 1) == 2)) {
-						arr[z] = 0;
-						z--;
-					}
-				} else arr[h] = 1;
-			}
+			int x1 = 31, x2 = 16;
+			TwosComplement (&i, &x1, &x2,1);
 		}
 		//if the digit is 64 or less then 64
-		else if(i<=63 && i>=32) {
-			int j = 0,z;
-			for (j; j < 64 - i; j++) arr[j] = 1;
-			for (int x = 0; x < i; x++) {
-				arr[j++] = rev[x];
-				h = j - 1;
-				z = h;
-			}
-			if (z == 63) {
-				if ((arr[z] == 1)) {
-					while (((arr[z] += 1) == 2)) {
-						arr[z] = 0;
-						z--;
-					}
-				} else arr[h] = 1;
-			}
+		else if (i <= 63 && i >= 32) {
+			int x1 = 63, x2 = 32;
+			TwosComplement (&i, &x1, &x2,1);
 		}
 	}
 	//else given integer unsigned value
@@ -160,29 +107,27 @@ void BinaryAndHexConverter (long long int n) {
 		while (n > 0) {
 			arr[i] = n % 2;
 			i++;
-			n = round (n / 2);
+			n =(long long int)(round((double)(n / 2)));
 		}
-		for (int a = i-1, b = 0; b <= i-1; b++, a--) rev[b] = arr[a];
-		if (i <=7 && i >= 0) {
-			for (j; j < 8 - i; j++) arr[j] = 0;
-			for (int x = 0; x < i; x++)arr[j++] = rev[x];
+		for (int a = i - 1, b = 0; b <= i - 1; b++, a--) rev[b] = arr[a];
+		if (i <= 7 && i >= 0) {
+			int x1 = 7, x2 = 0;
+			TwosComplement (&i, &x1, &x2, 0);
 		} else if (i <= 15 && i >= 8) {
-			for (j; j < 16 - i; j++) arr[j] = 0;
-			for (int x = 0; x < i; x++) arr[j++] = rev[x];
+			int x1 = 15, x2 = 8;
+			TwosComplement (&i, &x1, &x2, 0);
 		} else if (i <= 31 && i >= 16) {
-			for (j; j < 32 - i; j++) arr[j] = 0;
-			for (int x = 0; x < i; x++) arr[j++] = rev[x];
+			int x1 = 31, x2 = 16;
+			TwosComplement (&i, &x1, &x2, 0);
+		} else if (i <= 63 && i >= 32) {
+			int x1 = 63, x2 = 32;
+			TwosComplement (&i, &x1, &x2, 0);
 		}
-		else {
-			for (j; j < 64 - i; j++) arr[j] = 0;
-			for (int x = 0; x < i; x++) arr[j++] = rev[x];
-		}
-		h = j-1;
 	}
 	int* ptr;
 	ptr = &arr[0];
 	int stepin = 0;
-	for (long int k = 0; k <= h; k++) { 
+	for (long int k = 0; k <= h; k++) {
 		if ((arr[k] == 0) && (stepin == 0)) continue;
 		else {
 			printf ("%d", arr[k]);
@@ -193,16 +138,16 @@ void BinaryAndHexConverter (long long int n) {
 }
 /// <summary>it's return the 2 power of given value</summary>
 int Power (int m) {
-	int mul=1;
+	int mul = 1;
 	for (int i = 0; i < m; i++) mul *= 2;
 	return mul;
 }
 
 /// <summary> This function called by BinaryAndHexConverter function and get binary values from that function and print hexadecimal value</summary>
-void Hex (long long int  n,int *ptr) {
+void Hex (long long int  n, int* ptr) {
 	printf ("\n");
 	i = 0;
-	int m = 0,stepin = 0;
+	int m = 0, stepin = 0;
 	printf ("HEX:");
 	//Binary value converted into hexadecimal
 	for (int k = 0; k < (h + 1) / 4; k++) {
@@ -219,4 +164,25 @@ void Hex (long long int  n,int *ptr) {
 		}
 	}
 	printf ("\n");
+}
+
+void TwosComplement (int* i, int* x1, int* x2,int onoff) {
+	int j = 0, z = 0;;
+	/*for (j; j < 8 - i; j++) arr[j] = 0;
+	for (int x = 0; x < i; x++)arr[j++] = rev[x];*/
+	for (j; j < ((*x1) + 1) - (*i); j++) {
+		arr[j] = (onoff == 1) ? 1 : 0;
+	}
+	for (int x = 0; x < (*i); x++) arr[j++] = rev[x];
+	h = j - 1;
+	z = h;
+	if ((z == (*x1)) && (onoff==1) && z>=0){
+		if ((arr[z] == 1) && z >= 0) {
+			while ((arr[z] += 1) == 2 && z>0) {
+				arr[z] = 0;
+				z--;
+			}
+		}
+		else arr[z] = 1;
+	}
 }
