@@ -5,8 +5,8 @@
 #include<stdlib.h>
 long int i;
 long int h;
-long int arr[128];
-long int rev[128];
+long int arr[70];
+long int rev[70];
 long long int  n=1;
 void Hex (long long int  n, int* ptr);
 
@@ -22,7 +22,7 @@ int main () {
 	printf ("Please don't enter more than 11 digits number!");
 	printf ("If you want to exit enter [q]");
 	char c;
-	char arr[100];
+	char arr[12];
 	int i = 0;
 	printf ("\n");
 	const char* str = arr;
@@ -35,8 +35,8 @@ int main () {
 		int key = 0;
 		if ((c == '\n')) {
 			for (int j = 0; j <= i; j++) {
-				if (isalpha (arr[j])|| arr[0] == '\n'||ispunct(arr[j])||arr[j]==' '||i>12) {
-					if (arr[0] == '-'&&(!isalpha(arr[j])))continue;
+				if (isalpha (arr[j])|| arr[0] == '\n'||ispunct(arr[j])||arr[j]==' '|| i > 12) {
+					if (arr[0] == '-'&&(!isalpha(arr[j])) && (arr[0] != '\n') && (arr[j] != ' ') && i < 12)continue;
 					else {
 						Inv = true;
 						break;
@@ -168,8 +168,6 @@ void Hex (long long int  n, int* ptr) {
 
 void TwosComplement (int* i, int* x1, int* x2,int onoff) {
 	int j = 0, z = 0;;
-	/*for (j; j < 8 - i; j++) arr[j] = 0;
-	for (int x = 0; x < i; x++)arr[j++] = rev[x];*/
 	for (j; j < ((*x1) + 1) - (*i); j++) {
 		arr[j] = (onoff == 1) ? 1 : 0;
 	}
