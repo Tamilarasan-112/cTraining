@@ -3,184 +3,120 @@
 #include<stdbool.h>
 #include<ctype.h>
 #include<stdlib.h>
-long int i;
-long int h;
-long int arr[70];
-long int rev[70];
-long long int  n=1;
-void Hex (long long int  n, int* ptr);
+#define RED_COLOR "\x1b[31m"
+#define RESET_COLOR "\x1b[0m"
+long int mLength, mBinary[70],mRev[70];
+long long int  number=0;
+void Hex (int* ptr);
 
 /// <summary>This function get the decimal value from user and display the Binary and Hexadecimal value for the given decimal value.</summary>
-void BinaryAndHexConverter (long long int n);
+void BinaryAndHexConverter (long long int number);
 
-void TwosComplement (int* i, int* x1, int* x2,int onoff);
+void TwosComplement (int digits, int start, int end,int onOff);
 
 int main () {
-	//case:pass the decimal value
 	printf ("Important:\n");
-	printf ("Please Enter a Number only!\n");
-	printf ("Please don't enter more than 11 digits number!");
-	printf ("If you want to exit enter [q]");
-	char c;
-	char arr[12];
-	int i = 0;
-	printf ("\n");
-	const char* str = arr;
+	printf ("Please don't enter more than 11 digits number!\n");
+	printf ("If you want to exit enter [CTRL]+[Z]+[ENTER] (OR) [CTRL]+[C]\n");
+	char c, input[13] = { 0 };
+	int index = 0, it = 0;
+	const char* str = input;
 	char* endptr=NULL;
-	int it = 0;
-	printf ("Input:");
-	while ((c = getchar ()) != 'q') {
-		bool Inv = false;
-		arr[i] = c;
-		int key = 0;
+	printf ("\nInput:");
+	while ((c = getchar ()) != 'ÿ') {
+		bool Invalid = false;
+		input[index] = c;
 		if ((c == '\n')) {
-			for (int j = 0; j <= i; j++) {
-				if (isalpha (arr[j])|| arr[0] == '\n'||ispunct(arr[j])||arr[j]==' '|| i > 12) {
-					if (arr[0] == '-'&&(!isalpha(arr[j])) && (arr[0] != '\n') && (arr[j] != ' ') && i < 12)continue;
+			for (int j = 0,k=1; j <= index; j++,k++) {
+				if (isalpha (input[j]) || input[0] == '\n' || ispunct (input[j]) || input[j] == ' ' || index > 13 || (!isdigit(input[j]) && input[j]!='\n')) {
+					if (input[0] == '-' && (!isalpha (input[j])) && (input[0] != '\n') && (input[j] != ' ') && index < 13 && (!ispunct (input[k])))continue;
 					else {
-						Inv = true;
+						Invalid = true;
 						break;
 					}
-				}	
+				}
 			}
-			if (Inv) {
-				printf ("Invalid!\n");
+			if (Invalid) {
+				printf (RED_COLOR"Invalid!\n"RESET_COLOR);
 				const int n = 0;
 			}
 			else {
-				n = strtoll(str,&endptr,10);
-				if (n == 0) {
+				number = strtoll(str,&endptr,10);
+				if (number == 0) {
 					printf ("Binary:%d\n", 0);
 					printf ("HEX:%d\n", 0);
-				} else BinaryAndHexConverter (n);
+				} else BinaryAndHexConverter (number);
 			}
-			i = -1;
+			index = -1;
 		}
-		i++;
+		index++;
 		it = 1;
-		if (i==0 && it > 0) printf ("Input:");
+		if (index==0 && it > 0) printf ("\nInput:");
 	}
 }
 
-void BinaryAndHexConverter (long long int n) {
-	i = 0;
-	long long int temp= n,m = 0;
+void BinaryAndHexConverter (long long int number) {
+	int digits = 0, stepIn = 0, onOff = 0;
+	long long int positiveInt = 0;
 	//if the given integer is signed value 
-	if (n < 0) {
-		for (n; n < 0; n++)m++; //this for loop convert negative value to postive value
-		n = m;
-		printf ("Binary:");
-		//converted to binary
-		while (n > 0) {
-			arr[i] = n % 2;
-			n = (long long int)(round ((double)(n / 2)));
-			i++;
-		}
-		for (int a = i-1 , b = 0; b <= i-1 ; b++, a--) {
-			//(arr[a] == 0)? rev[b] = 1:rev[b] = 0;
-			rev[b] = (arr[a] == 0) ? 1 : 0;
-		}
-		//if the digit is 8 or less then 8
-		if (i <=7 && i >= 0) {
-			int x1 = 7, x2 = 0;
-			TwosComplement (&i, &x1, &x2,1);
-		//if the digit is 16 or less then 16
-		} else if (i <= 15 && i >= 8) {
-			int x1 = 15, x2 = 8;
-			TwosComplement (&i, &x1, &x2,1);
-		//if the digit is 16 or less then 16
-		} else if (i <= 31 && i >= 16) {
-			int x1 = 31, x2 = 16;
-			TwosComplement (&i, &x1, &x2,1);
-		}
-		//if the digit is 64 or less then 64
-		else if (i <= 63 && i >= 32) {
-			int x1 = 63, x2 = 32;
-			TwosComplement (&i, &x1, &x2,1);
-		}
+	if (number < 0) {
+		for (number; number < 0; number++)positiveInt++; //this for loop convert negative value to positive value
+		number = positiveInt;
+		onOff = 1;
 	}
-	//else given integer unsigned value
-	else {
-		temp = n;
-		int j = 0;
-		printf ("Binary:");
-		while (n > 0) {
-			arr[i] = n % 2;
-			i++;
-			n =(long long int)(round((double)(n / 2)));
-		}
-		for (int a = i - 1, b = 0; b <= i - 1; b++, a--) rev[b] = arr[a];
-		if (i <= 7 && i >= 0) {
-			int x1 = 7, x2 = 0;
-			TwosComplement (&i, &x1, &x2, 0);
-		} else if (i <= 15 && i >= 8) {
-			int x1 = 15, x2 = 8;
-			TwosComplement (&i, &x1, &x2, 0);
-		} else if (i <= 31 && i >= 16) {
-			int x1 = 31, x2 = 16;
-			TwosComplement (&i, &x1, &x2, 0);
-		} else if (i <= 63 && i >= 32) {
-			int x1 = 63, x2 = 32;
-			TwosComplement (&i, &x1, &x2, 0);
-		}
+	printf ("Binary:");
+	//converted to binary
+	while (number > 0) {
+		mBinary[digits++] = number % 2;
+		number = (long long int)(round ((double)(number / 2)));
 	}
-	int* ptr;
-	ptr = &arr[0];
-	int stepin = 0;
-	for (long int k = 0; k <= h; k++) {
-		if ((arr[k] == 0) && (stepin == 0)) continue;
+	for (int a = digits - 1, b = 0; b <= digits - 1; b++, a--) mRev[b] = mBinary[a];
+	//if the digit is 8 or less then 8
+	if (digits <= 7 && digits >= 0) TwosComplement (digits, 0, 7, onOff);
+	//if the digit is 16 or less then 16
+   else if (digits <= 15 && digits >= 8) TwosComplement (digits, 8, 15, onOff);
+	//if the digit is 16 or less then 16
+	else if (digits <= 31 && digits >= 16) TwosComplement (digits, 16, 31, onOff);
+	//if the digit is 64 or less then 64
+	else if (digits <= 63 && digits >= 32) TwosComplement (digits, 32, 63, onOff);
+	int* ptr = &mBinary[0];
+	for (long int k = 0; k <= mLength; k++) {
+		if ((mBinary[k] == 0) && (stepIn == 0)) continue;
 		else {
-			printf ("%d", arr[k]);
-			stepin = 1;
+			printf ("%d", mBinary[k]);
+			stepIn = 1;
 		}
 	}
-	Hex (temp, ptr);
-}
-/// <summary>it's return the 2 power of given value</summary>
-int Power (int m) {
-	int mul = 1;
-	for (int i = 0; i < m; i++) mul *= 2;
-	return mul;
+	Hex (ptr);
 }
 
 /// <summary> This function called by BinaryAndHexConverter function and get binary values from that function and print hexadecimal value</summary>
-void Hex (long long int  n, int* ptr) {
-	printf ("\n");
-	i = 0;
-	int m = 0, stepin = 0;
-	printf ("HEX:");
+void Hex (int* ptr) {
+	int i = 0,m = 0, stepIn = 0;
+	printf ("\nHEX:");
 	//Binary value converted into hexadecimal
-	for (int k = 0; k < (h + 1) / 4; k++) {
+	for (int k = 0; k < (mLength + 1) / 4; k++) {
 		int sum = 0;
-		for (int j = 0, x = 3; j < 4; x--, j++) {
-			sum += (*ptr) * Power (x);
-			ptr++;
-		}
-		if ((sum == 0) && (stepin == 0)) continue;
+		for (int j = 0, exp = 3; j < 4; exp--, j++) sum += (*(ptr++)) * (int)pow (2,exp);
+		if ((sum == 0) && (stepIn == 0)) continue;
 		else {
-			if (sum < 10) printf ("%d", sum);
-			else printf ("%c", sum + 55);
-			stepin = 1;
+			(sum < 10) ? printf ("%d", sum):printf ("%c", sum + 55);
+			stepIn = 1;
 		}
 	}
 	printf ("\n");
 }
 
-void TwosComplement (int* i, int* x1, int* x2,int onoff) {
-	int j = 0, z = 0;;
-	for (j; j < ((*x1) + 1) - (*i); j++) {
-		arr[j] = (onoff == 1) ? 1 : 0;
-	}
-	for (int x = 0; x < (*i); x++) arr[j++] = rev[x];
-	h = j - 1;
-	z = h;
-	if ((z == (*x1)) && (onoff==1) && z>=0){
-		if ((arr[z] == 1) && z >= 0) {
-			while ((arr[z] += 1) == 2 && z>0) {
-				arr[z] = 0;
-				z--;
-			}
-		}
-		else arr[z] = 1;
+void TwosComplement (int digits, int start, int end, int onOff) {
+	int index = 0, lastElementIndex = 0;
+	//0/1 span to required digits
+	for (index; index < ((end) + 1) - (digits); index++) mBinary[index] = (onOff == 1) ? 1 : 0;
+	for (int x = 0; x < (digits); x++)(onOff == 1) ? (mBinary[index++] = (mRev[x] == 1) ? 0 : 1): (mBinary[index++] = mRev[x]);
+	mLength = index - 1;
+	lastElementIndex = mLength;
+	//two's complement
+	if ((lastElementIndex == (end)) && (onOff==1) && lastElementIndex>=0){
+		if ((mBinary[lastElementIndex] == 1) && lastElementIndex >= 0) while ((mBinary[lastElementIndex] += 1) == 2 && (lastElementIndex > 0)) mBinary[lastElementIndex--] = 0;
+		else mBinary[lastElementIndex] = 1;
 	}
 }
