@@ -11,19 +11,27 @@
 long int mLength, mBinary[70], mRev[70], mCopyBinary[70];
 long long int  mNumber = 0;
 char mInput[13] = { 0 };
+
+/// <summary> This function will convert binary values to hexadecimal value</summary>
 void Hex (int* ptr);
+
 /// <summary>
 ///  this function will check the given input is valid or or not.
 /// </summary>
-bool IsValid (int index);
+bool IsValid (int index, bool* onOff);
 
 /// <summary>This function get the decimal value from user and display the Binary 
 ///and Hexadecimal value for the given decimal value.</summary>
-void BinaryAndHexConverter (long long int mNumber);
+void BinaryAndHexConverter (long long int mNumber, bool* onOff);
 
-void TwosComplement (int digits, int end, bool onOff);
 
-void TestCases (long long int positiveInt, int digits, bool onOff);
+void TwosComplement (int digits, int end, bool* onOff);
+
+/// <summary>
+/// This function will convert the binary into decimal and compare the given decimal value and 
+/// converted decimal value to display passed or failed.
+/// </summary>
+void TestCases (long long int positiveInt, int digits, bool* onOff);
 
 int main () {
 	printf ("Important:\n");
@@ -36,11 +44,12 @@ int main () {
 	printf ("\nInput:");
 	bool isValid = true;
 	while ((c = getchar ()) != 'ÿ') {
+		bool x = false;
 		mInput[index] = c;
 		if (c == '\n' || c == '\x1a') {
-			if (IsValid (index)) {
+			if (IsValid (index, &x)) {
 				mNumber = strtoll (str, &endptr, 10);
-				(mNumber == 0) ? printf ("Binary:0\nHEX:0\n") : BinaryAndHexConverter (mNumber);
+				(mNumber == 0) ? printf ("Binary:0\nHEX:0\n") : BinaryAndHexConverter (mNumber, &x);
 			} else {
 				printf (RED_COLOR"Invalid!\n"RESET_COLOR);
 				const int mNumber = 0;
@@ -53,16 +62,10 @@ int main () {
 	}
 }
 
-void BinaryAndHexConverter (long long int mNumber) {
+void BinaryAndHexConverter (long long int mNumber, bool* onOff) {
 	int digits = 0;
-	bool onOff = false, isLeadingZero = false;
+	bool isLeadingZero = false;
 	long long int positiveInt = 0;
-	//if the given integer is signed value 
-	if (mNumber < 0) {
-		for (mNumber; mNumber < 0; mNumber++)positiveInt++; //this for loop convert negative value to positive value
-		mNumber = positiveInt;
-		onOff = true;
-	}
 	positiveInt = mNumber;
 	//converted to binary
 	while (mNumber > 0) {
@@ -81,7 +84,6 @@ void BinaryAndHexConverter (long long int mNumber) {
 		else if (digits <= 63) TwosComplement (digits, 63, onOff);
 	}
 	int* ptr = &mBinary[0];
-	int* ptr1 = &mBinary[0];
 	for (int i = 0; i <= mLength; i++) {
 		mCopyBinary[i] = mBinary[i];
 	}
@@ -97,8 +99,6 @@ void BinaryAndHexConverter (long long int mNumber) {
 	Hex (ptr);
 }
 
-/// <summary> This function called by BinaryAndHexConverter function and get binary values from that function 
-///and print hexadecimal value</summary>
 void Hex (int* ptr) {
 	int i = 0, m = 0;
 	bool isLeadingZero = false;
@@ -116,20 +116,20 @@ void Hex (int* ptr) {
 	printf ("\n");
 }
 
-void TwosComplement (int digits, int end, bool onOff) {
+void TwosComplement (int digits, int end, bool* onOff) {
 	int index = 0, lastElementIndex = 0;
 	//0/1 span to required digits
-	for (index; index < ((end)+1) - (digits); index++) mBinary[index] = (onOff == true) ? 1 : 0;
-	for (int x = 0; x < (digits); x++)(onOff == true) ? (mBinary[index++] = (mRev[x] == 1) ? 0 : 1) : (mBinary[index++] = mRev[x]);
+	for (index; index < ((end)+1) - (digits); index++) mBinary[index] = (*onOff == true) ? 1 : 0;
+	for (int x = 0; x < (digits); x++)(*onOff == true) ? (mBinary[index++] = (mRev[x] == 1) ? 0 : 1) : (mBinary[index++] = mRev[x]);
 	mLength = index - 1;
-	lastElementIndex = mLength;	if ((lastElementIndex == (end)) && (onOff == true) && lastElementIndex >= 0) {
+	lastElementIndex = mLength;	if ((lastElementIndex == (end)) && (*onOff == true) && lastElementIndex >= 0) {
 		if ((mBinary[lastElementIndex] == 1) && lastElementIndex >= 0)
 			while ((mBinary[lastElementIndex] += 1) == 2 && (lastElementIndex > 0)) mBinary[lastElementIndex--] = 0;
 		else mBinary[lastElementIndex] = 1;
 	}
 }
 
-bool IsValid (int index) {
+bool IsValid (int index, bool* onOff) {
 	if (index > 11) {
 		printf (BLUE_COLOR"Please Enter the number less then 12 digit!\n"RESET_COLOR);
 		return false;
@@ -139,6 +139,8 @@ bool IsValid (int index) {
 			if (isdigit (mInput[j]) || mInput[j] == '\n') continue;
 			else {
 				if (mInput[0] == '-' && mInput[1] != '\n') {
+					*onOff = true;
+					if (j == 0 && mInput[0] == '-')mInput[0] = '0';
 					for (int i = 1; i <= index; i++) {
 						if (isdigit (mInput[i]) || mInput[i] == '\n') continue;
 						else return false;
@@ -150,10 +152,10 @@ bool IsValid (int index) {
 	return true;
 }
 
-void TestCases (long long int positiveInt, int digits, bool onOff) {
+void TestCases (long long int positiveInt, int digits, bool* onOff) {
 	int lastElementIndex = mLength, x = 0;
 	long long int n = 0;
-	if ((onOff == true) && lastElementIndex >= 0) {
+	if ((*onOff == true) && lastElementIndex >= 0) {
 		for (x; x <= mLength; x++) (mCopyBinary[x] = (mCopyBinary[x] == 1) ? 0 : 1);
 		if ((mCopyBinary[lastElementIndex] == 1) && lastElementIndex >= 0)
 			while ((mCopyBinary[lastElementIndex] += 1) == 2 && (lastElementIndex > 0)) mCopyBinary[lastElementIndex--] = 0;
