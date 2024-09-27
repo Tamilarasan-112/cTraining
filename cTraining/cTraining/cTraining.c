@@ -68,8 +68,8 @@ int main () {
 }
 
 bool IsValidChoice (char input[]) {
-   if ((!((input[0] >= '1') && (input[0] <= '3'))) || strlen (input) > 2)return false;
-   return true;
+   if (((input[0] >= '1') && (input[0] <= '3')) && strlen (input) <= 2)return true;
+   return false;
 }
 
 void GetText () {
@@ -89,8 +89,8 @@ void GetText () {
 }
 
 bool IsValidText (char input[]) {
-   if (strlen (input) > 108 || input[0] == '\n') return false;
-   return true;
+   if (strlen (input) <= 108 && input[0] != '\n') return true;
+   return false;
 }
 
 bool IsPalindromeText (char sent[]) {
