@@ -2,7 +2,7 @@
 // Training ~ A training program for new joiners at Metamation, Batch - July 2024.
 // Copyright (c) Metamation India.
 // ------------------------------------------------------------------
-// Program.c 
+// cTraining.c
 // Palindrome checker and Reverse number.
 // Program on main branch.
 // ------------------------------------------------------------------------------------------------
@@ -23,7 +23,6 @@
 
 #define SUCCESSFUL 1;
 #define UNSUCCESSFUL 0;
-#define INVALID_INPUT -1;
 
 /// <summary>Return true if input is valid.</summary>
 bool IsValidChoice (char input[]);
@@ -69,12 +68,7 @@ int main () {
 }
 
 bool IsValidChoice (char input[]) {
-   int strLength = strlen (input);
-   if (strLength > 2)return false;
-   for (int j = 0; j < strLength; j++) {
-      if (!(isdigit (input[j])) && input[1] != '\n')return false;
-   }
-   if (!((input[0] >= '1') && (input[0] <= '3')))return false;
+   if ((!((input[0] >= '1') && (input[0] <= '3'))) || strlen (input) > 2)return false;
    return true;
 }
 
@@ -95,12 +89,11 @@ void GetText () {
 }
 
 bool IsValidText (char input[]) {
-   if (strlen (input) > 108 || input[0] == '\n' || input[0] == '\0') return false;
+   if (strlen (input) > 108 || input[0] == '\n') return false;
    return true;
 }
 
 bool IsPalindromeText (char sent[]) {
-   bool isEqual = false;
    int strLen = strlen (sent), j = 0;
    for (int i = 0; i < strLen; i++) {
       if ((sent[i] >= '0' && sent[i] <= '9') || (sent[i] >= 'a' && sent[i] <= 'z')
@@ -110,10 +103,9 @@ bool IsPalindromeText (char sent[]) {
    }
    sent[j] = '\0';
    strLen = j;
-   for (int i = 0,j=strLen - 1; i < strLen; i++,j--) {
-     if (sent[i] != sent[j]) isEqual = true;
+   for (int i = 0, j = strLen - 1; i < strLen; i++, j--) {
+      if (sent[i] != sent[j]) return false;
    }
-   if (isEqual)return false;
    return true;
 }
 
@@ -146,13 +138,13 @@ bool IsValidInt (char input[]) {
    const char* str = input;
    char** endPtr = NULL;
    int strLength = strlen (input);
-   if (strLength - 1 > 10 || strtoll (str, endPtr, 10) > 2147483647)return false;
+   if (strLength - 1 > 10 || strtoll (str, endPtr, 10) > 2147483647 || input[0] == '\n')return false;
    if (input[0] == '-' && input[1] != '\n') {
-      for (int k = 1; k < strLength - 2; k++) {
+      for (int k = 1; k < strLength - 1; k++) {
          if (!isdigit (input[k]))return false;
       }
    } else {
-      for (int j = 0, k = 1; j < strLength - 1; j++, k++) {
+      for (int j = 0; j < strLength - 1; j++) {
          if (!(isdigit (input[j])))return false;
       }
    }
@@ -160,7 +152,7 @@ bool IsValidInt (char input[]) {
 }
 
 int ReverseNum (int num) {
-   int posNum = num,i = 0, revNum;
+   int posNum = num, i = 0, revNum;
    if (num < 0) posNum = -num;
    char revNumbers[11] = { '0' };
    while (posNum > 0) {
@@ -206,7 +198,7 @@ void Test () {
          case '2':
             ManualTest ();
             break;
-         case '3':isExit=true;
+         case '3':isExit = true;
          }
       } else {
          if (choice[strlen (choice) - 1] != '\n') ClearInputBuffer ();
