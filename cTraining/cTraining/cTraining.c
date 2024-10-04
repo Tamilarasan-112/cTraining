@@ -24,13 +24,11 @@
 #define SUCCESSFUL 1;
 #define UNSUCCESSFUL 0;
 
-#pragma warning (disable : 4996)
-
 /// <summary>Return true if input is valid.</summary>
 bool IsValidChoice (char input[]);
 
 /// <summary>Get the user input.</summary>
-void GetText (char input[]);
+void GetText (char input[],int charArrSize);
 
 /// <summary>Return true if input text is valid.</summary>
 bool IsValidText (char sent[]);
@@ -73,24 +71,21 @@ bool IsValidChoice (char input[]) {
    return (((input[0] >= '1') && (input[0] <= '3')) && strlen (input) <= 2);
 }
 
-void GetText (char input[]) {
-   char sent[110];
+void GetText (char input[],int charArrSize) {
    bool isExit = false;
    do {
       printf ("\nInput:");
-      fgets (sent, 110, stdin);
-      if (IsValidText (sent)) {
-         isExit = true;
-         strcpy(input, sent);
-      } else {
+      fgets (input,charArrSize, stdin);
+      if (IsValidText (input))isExit = true;
+      else {
          printf (RED_COLOR"\nInvalid!\n"RESET_COLOR);
-         if (sent[strlen (sent) - 1] != '\n')ClearInputBuffer ();
+         if (input[charArrSize - 1] != '\n')ClearInputBuffer ();
       }
    } while (!isExit);
 }
 
 bool IsValidText (char input[]) {
-   return (strlen (input) <= 108 && input[0] != '\n');
+   return (input[strlen(input)-1]=='\n' && input[0] != '\n');
 }
 
 bool IsPalindromeText (char sent[]) {
@@ -116,17 +111,14 @@ int Display (char sent[]) {
 }
 
 void GetInt (char input[]) {
-   char number[15];
    bool isExit = false;
    do {
       printf ("\ninput:");
-      fgets (number, 15, stdin);
-      if (IsValidInt (number)) {
-         isExit = true;
-         strcpy(input,number);
-      } else {
+      fgets (input, 15, stdin);
+      if (IsValidInt (input)) isExit = true;
+      else {
          printf (RED_COLOR"Invalid!\n"RESET_COLOR);
-         if (number[strlen (number) - 1] != '\n') ClearInputBuffer ();
+         if (input[strlen (input) - 1] != '\n') ClearInputBuffer ();
       }
    } while (!isExit);
 }
@@ -203,7 +195,8 @@ void Test () {
 }
 
 void ManualTest () {
-   char choice[4], ch = 0,textIp[110],numberIp[15];
+   int charArrSize = 100;
+   char choice[4], textIp[100], numberIp[20];
    bool isExit = false;
    do {
       printf ("__________________________________\nMenu:\nPalindrome Checker  ->  Enter 1.\nReverse Number");
@@ -213,7 +206,7 @@ void ManualTest () {
       if (IsValidChoice (choice)) {
          switch (choice[0]) {
          case '1':
-            GetText (textIp);
+            GetText (textIp,charArrSize);
             Display (textIp);
             break;
          case '2':
@@ -230,8 +223,8 @@ void ManualTest () {
 }
 
 void AutomationTest () {
-   char textTest[][200] = { "Don’t nod","Was it a car or a cat I saw?","Madam!","Malayalam","Civic","Kukku","Bib","Nun","Level","I did, did I ? ","Mom","Dada",
- "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\n","Appa" };
+   char textTest[][200] = { "Don’t nod\n","Was it a car or a cat I saw?\n","Madam!\n","Malayalam\n","Civic\n","Kukku\n","Bib\n","Nun\n","Level\n","I did, did I ?\n ","Mom\n","Dada\n",
+ "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\n","Appa\n" };
    char numTest[][20] = { "121","94867","123","34543","1","1212132","00000","12101","919","18881","- 112","2147483648","3abs","Amma" };
    for (int i = 0, n = 1; i < 14; i++, n++) {
       printf ("\ncase%d :\n", n);
