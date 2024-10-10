@@ -65,6 +65,8 @@ void Display (int* array, int arrSize);
 
 int main () {
    UnitTest ();
+   /*int arr[] = { 1,1,2,2,3 };
+   printf ("%d", BinarySearch (3, arr, 5));*/
 }
 
 int GetTarget (int* target) {
@@ -127,6 +129,10 @@ int GetArray (int** arr, int* arrSize) {
          i = 0;
          return 0;
       }
+   } else {
+      printf (COLOR_RED"\nInvalid!\n"COLOR_RESET);
+      i = 0;
+      return 0;
    }
    return 0;
 }
@@ -135,7 +141,8 @@ bool IsValidInt (char input[]) {
    const char* str = input;
    char** endPtr = NULL;
    int strLength = (int)strlen (input);
-   if (strLength > 10 || strtoll (str, endPtr, 10) > 2147483647 || input[0] == '\n')return false;
+   long long int num = strtoll (str, endPtr, 10);
+   if (strLength > 11 || !(num >= (signed)2147483648 && num <= 2147483647) || input[0] == '\n')return false;
    if (input[0] == '-' && input[1] != '\n') {
       for (int k = 1; k < strLength; k++)
          if (!(isdigit (input[k])))return false;
@@ -204,18 +211,27 @@ void BubbleSort (int arr[], int arrSize) {
 }
 
 int BinarySearch (int target, int array[], int arrSize) {
-   int midIndex = (int)round ((arrSize / 2) - 0.5) - 1;
-   if (array[midIndex] == target)return midIndex;
+   bool isFound = false;
+   int midIndex = (arrSize % 2 == 0) ? (int)round ((arrSize / 2) - 0.5) - 1 : (int)round ((arrSize / 2) - 0.5);
+   int minIndex = arrSize - 1;
+   if (array[midIndex] == target) {
+      isFound = true;
+      minIndex = midIndex;
+   }
    if (array[midIndex] < target) {
       for (int i = midIndex + 1; i < arrSize; i++) {
-         if (array[i] == target)return i;
+         if (array[i] == target && minIndex >= i) return i;
       }
    } else {
       for (int i = midIndex - 1; i >= 0; i--) {
-         if (array[i] == target)return i;
+         if (array[i] == target && minIndex >= i) {
+            minIndex = i;
+            isFound = true;
+         }
       }
    }
-   return -1;
+   if (isFound)return minIndex;
+   else return -1;
 }
 
 bool IsValidChoice (char choice[]) {
@@ -261,8 +277,8 @@ void UnitTest () {
 
 void TestInputMethod () {
    int* arr;
-   int arrSize;
-   if (GetArray (&arr, &arrSize) == 1) printf (COLOR_GREEN"\nPassed\n"COLOR_RESET);
+   int arrSize, ret = GetArray (&arr, &arrSize);
+   if (ret == 1 || ret == 0) printf (COLOR_GREEN"\nPassed\n"COLOR_RESET);
    else printf (COLOR_YELLOW"\nFailed\n"COLOR_RESET);
 }
 
@@ -329,8 +345,8 @@ void TestSortMethod () {
 void TestSearchMethod () {
    printf ("\nBinarySearch Method\n");
    //Binary search method
-   int input21[][20] = { {2,1,3,1,2},{-2,3,2,1,3},{2,12,23,3434,43,435,34,-23 },{34,234,34,4,3,4} };
-   int input22[] = { 5,5,8,6 }, target[] = { 3,-2,5,34 }, expOut3[] = { 4,0,-1,3 }, ret1 = 0;
+   int input21[][20] = { {2,1,3,1,2},{-2,-2,-2,1,-3},{2,12,23,3434,43,435,34,-23 },{34,234,34,4,3,4} };
+   int input22[] = { 5,5,8,6 }, target[] = { 3,-2,5,34 }, expOut3[] = { 4,1,-1,3 }, ret1 = 0;
    for (int i = 0; i < 4; i++) {
       HeapSort (input21[i], input22[i]);
       printf ("\nInput:");
