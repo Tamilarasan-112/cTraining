@@ -28,7 +28,7 @@
 bool IsValidChoice (char input[]);
 
 /// <summary>Get the user input.</summary>
-void GetText (char input[],int charArrSize);
+void GetText (char input[], int charArrSize);
 
 /// <summary>Return true if input text is valid.</summary>
 bool IsValidText (char sent[]);
@@ -43,7 +43,7 @@ bool IsPalindromeText (char arr[]);
 void GetInt (char input[]);
 
 /// <summary>Return reversed version of given number.</summary>
-int ReverseNum (int num);
+long long int ReverseNum (int num);
 
 /// <summary>remove the remaining characters from the input buffer.</summary>
 void ClearInputBuffer ();
@@ -63,36 +63,45 @@ void ManualTest ();
 /// <summary>Display the test cases are Passed or failed.</summary>
 void AutomationTest ();
 
+int TestPalindromeMethod (char textTest[]);
+
+int TestReverseNumMethod (char numTest[]);
+
 int main () {
    Test ();
 }
 
 bool IsValidChoice (char input[]) {
-   return (((input[0] >= '1') && (input[0] <= '3')) && strlen (input) <= 2);
+   return (strlen (input) <= 2 && ((input[0] >= '1') && (input[0] <= '3')));
 }
 
-void GetText (char input[],int charArrSize) {
+void GetText (char input[], int charArrSize) {
    bool isExit = false;
    do {
       printf ("\nInput:");
-      fgets (input,charArrSize, stdin);
+      fgets (input, charArrSize, stdin);
       if (IsValidText (input))isExit = true;
       else {
          printf (RED_COLOR"\nInvalid!\n"RESET_COLOR);
-         if (input[charArrSize - 1] != '\n')ClearInputBuffer ();
+         if (input[strlen (input) - 1] != '\n')ClearInputBuffer ();
       }
    } while (!isExit);
 }
 
 bool IsValidText (char input[]) {
-   return (input[strlen(input)-1]=='\n' && input[0] != '\n');
+   int strLength = (int)strlen (input);
+   if (input[strLength - 1] == '\n' && input[0] != '\n') {
+      for (int i = 0; i < strLength; i++)
+         if (isalnum (input[i]))return true;
+   }
+   return false;
 }
 
 bool IsPalindromeText (char sent[]) {
    int strLen = (int)strlen (sent), j = 0;
-   for (int i = 0; i < strLen; i++) 
+   for (int i = 0; i < strLen; i++)
       if ((sent[i] >= '0' && sent[i] <= '9') || (sent[i] >= 'a' && sent[i] <= 'z')
-         || (sent[i] >= 'A' && sent[i] <= 'z')) 
+         || (sent[i] >= 'A' && sent[i] <= 'z'))
          sent[j++] = (isupper (sent[i])) ? sent[i] + 32 : sent[i];
    sent[j] = '\0';
    strLen = j;
@@ -103,10 +112,10 @@ bool IsPalindromeText (char sent[]) {
 
 int Display (char sent[]) {
    if (IsPalindromeText (sent)) {
-      printf (GREEN_COLOR"\nPalindrome\n"RESET_COLOR);
+      printf (GREEN_COLOR"Palindrome\n"RESET_COLOR);
       return SUCCESSFUL;
    }
-   printf (YELLOW_COLOR"\nNot a Palindrome\n"RESET_COLOR);
+   printf (YELLOW_COLOR"Not a Palindrome\n"RESET_COLOR);
    return UNSUCCESSFUL;
 }
 
@@ -127,38 +136,41 @@ bool IsValidInt (char input[]) {
    const char* str = input;
    char** endPtr = NULL;
    int strLength = (int)strlen (input);
-   if (strLength - 1 > 10 || strtoll (str, endPtr, 10) > 2147483647 || input[0] == '\n')return false;
+   long long int num = strtoll (str, endPtr, 10);
+   if (!(num >= -2147483647 && num <= 2147483647) || input[0] == '\n')return false;
    if (input[0] == '-' && input[1] != '\n') {
-      for (int k = 1; k < strLength - 1; k++) 
+      for (int k = 1; k < strLength - 1; k++)
          if (!isdigit (input[k]))return false;
    } else {
-      for (int j = 0; j < strLength - 1; j++) 
+      for (int j = 0; j < strLength - 1; j++)
          if (!(isdigit (input[j])))return false;
    }
    return true;
 }
 
-int ReverseNum (int num) {
+long long int ReverseNum (int num) {
    int posNum = num, i = 0, revNum;
    if (num < 0) posNum = -num;
    char revNumbers[11] = { '0' };
+   const char* str = revNumbers;
+   char** endPtr = NULL;
    while (posNum > 0) {
       revNum = posNum % 10;
       posNum /= 10;
       revNumbers[i++] = (char)revNum + 48;
    }
    revNumbers[i] = '\0';
-   return atoi (revNumbers);
+   return strtoll (str, endPtr, 10);
 }
 
 int DisplayInt (int num) {
-   int revNumber = ReverseNum (num);
+   long long int revNumber = ReverseNum (num);
    if (num >= 0 && revNumber == num) {
-      printf ("output:%d\n", revNumber);
+      printf ("output:%lld\n", revNumber);
       printf (GREEN_COLOR"Palindrome\n"RESET_COLOR);
       return SUCCESSFUL;
    } else {
-      printf ("output:%d\n", revNumber);
+      printf ("output:%lld\n", revNumber);
       printf (YELLOW_COLOR"Not a Palindrome\n"RESET_COLOR);
       return UNSUCCESSFUL;
    }
@@ -206,12 +218,12 @@ void ManualTest () {
       if (IsValidChoice (choice)) {
          switch (choice[0]) {
          case '1':
-            GetText (textIp,charArrSize);
+            GetText (textIp, charArrSize);
             Display (textIp);
             break;
          case '2':
             GetInt (numberIp);
-            DisplayInt(atoi(numberIp));
+            DisplayInt (atoi (numberIp));
             break;
          case '3':isExit = true;
          }
@@ -223,20 +235,31 @@ void ManualTest () {
 }
 
 void AutomationTest () {
-   char textTest[][200] = { "Don’t nod\n","Was it a car or a cat I saw?\n","Madam!\n","Malayalam\n","Civic\n","Kukku\n","Bib\n","Nun\n","Level\n","I did, did I ?\n ","Mom\n","Dada\n",
- "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\n","Appa\n" };
-   char numTest[][20] = { "121","94867","123","34543","1","1212132","00000","12101","919","18881","- 112","2147483648","3abs","Amma" };
-   for (int i = 0, n = 1; i < 14; i++, n++) {
+   char textTest[][200] = { "Don’t nod\n","@@#@#@\n","Tamilarasan.Ramalingam@trumpf.com\n","Was it a car or a cat I saw?\n","Madam!\n","Malayalam\n","Civic\n","\n","Kukku\n","Bib\n","Nun\n","Level\n","I did, did I ?\n","Mom\n","Dada\n",
+ "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\n","Appa\n","     \n" };
+   int expOut1[] = { 1,-1,0,1,1,1,1,-1,0,1,1,1,1,1,0,0,1,-1 };
+   char numTest[][20] = { "   \n","121\n","94867\n","123\n","34543\n","1\n","1212132\n","00000\n","12101\n","919\n","18881\n","- 112\n","2147483648\n","3abs\n","Amma\n","2147483647\n","-2147483647\n","\n" };
+   int expOut2[] = { -1,1,0,0,1,1,0,1,0,1,1,-1,-1,-1,-1,0,0,-1 };
+   for (int i = 0, n = 1; i < 18; i++, n++) {
       printf ("\ncase%d :\n", n);
-      printf ("\nPalindrome checker\n");
-      printf ("\ninput:%s\n", textTest[i]);
+      printf ("\nPalindrome checker:\n");
+      printf ("\ninput:%s", textTest[i]);
       printf ("output:");
-      for (int j = ((int)strlen (textTest[i])); j >= 0; j--)printf ("%c", textTest[i][j]);
-      if (IsValidText (textTest[i]))(Display (textTest[i]) == 1) ? printf (GREEN_COLOR"Passed!\n"RESET_COLOR) : printf (YELLOW_COLOR"Failed\n"RESET_COLOR);
-      else printf (RED_COLOR"\nInvalid!\n"RESET_COLOR);
-      printf ("\nReverse Number\n");
-      printf ("\ninput:%s\n", numTest[i]);
-      if (IsValidInt (numTest[i]))(DisplayInt (atoi (numTest[i])) == 1) ? printf (GREEN_COLOR"Passed!\n"RESET_COLOR) : printf (YELLOW_COLOR"Failed\n"RESET_COLOR);
-      else printf (RED_COLOR"Invalid!\n"RESET_COLOR);
+      for (int j = (int)strlen (textTest[i]) - 2; j >= 0; j--) printf ("%c", textTest[i][j]);
+      printf ("\n");
+      (TestPalindromeMethod (textTest[i]) == expOut1[i]) ? printf (GREEN_COLOR"\nPassed!\n"RESET_COLOR) : printf (YELLOW_COLOR"\nFailed\n"RESET_COLOR);
+      printf ("\nReverse Number:\n");
+      printf ("\ninput:%s", numTest[i]);
+      (TestReverseNumMethod (numTest[i]) == expOut2[i]) ? printf (GREEN_COLOR"\nPassed!\n"RESET_COLOR) : printf (YELLOW_COLOR"\nFailed\n"RESET_COLOR);
    }
+}
+
+int TestPalindromeMethod (char textTest[]) {
+   if (IsValidText (textTest)) return Display (textTest);
+   else return -1;
+}
+
+int TestReverseNumMethod (char numTest[]) {
+   if (IsValidInt (numTest)) return DisplayInt (atoi (numTest));
+   else return -1;
 }
