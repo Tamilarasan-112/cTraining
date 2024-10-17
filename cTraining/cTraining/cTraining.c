@@ -69,24 +69,22 @@ int main () {
 }
 
 int GetTarget (int* target) {
-   char input[12] = "0";
+   char input[13] = "0";
    printf ("\nTarget:");
-   fgets (input, 12, stdin);
-   int strLength = strlen (input);
-   input[strLength - 1] = '\0';
+   fgets (input, 13, stdin);
    if (IsValidInt (input)) {
       *target = atoi (input);
       return 1;
    } else {
       printf (COLOR_RED"\nInvalid input!\n"COLOR_RESET);
-      if (input[strLength - 1] != '\n') ClearBufferInput ();
+      if (input[strlen (input) - 1] != '\n') ClearBufferInput ();
    }
    return 0;
 }
 
 int GetArray (int** arr, int* arrSize) {
    bool isExit = false;
-   char c, subArr[12] = "0";
+   char c, subArr[13] = "0";
    int i = 0, n = 1, index = 0;
    int* intArr = (int*)malloc (n * sizeof (int));
    printf ("\nInput:");
@@ -99,7 +97,8 @@ int GetArray (int** arr, int* arrSize) {
       }
       subArr[i++] = c;
       if (c == ' ') {
-         subArr[i - 1] = '\0';
+         subArr[i - 1] = '\n';
+         subArr[i] = '\0';
          if ((subArr[0] == '-' || isdigit (subArr[0])) && IsValidInt (subArr)) {
             int* temp = (int*)realloc (intArr, (n++) * sizeof (int));
             if (temp != NULL) {
@@ -117,8 +116,9 @@ int GetArray (int** arr, int* arrSize) {
    }
    // For last element
    if (i > 0) {
-      subArr[i] = '\0';
-      strcpy_s (subArr, i + 1, subArr);
+      subArr[i] = '\n';
+      subArr[i + 1] = '\0';
+      strcpy_s (subArr, 13, subArr);
       if (IsValidInt (subArr)) {
          intArr[index] = atoi (subArr);
          *arrSize = n;
@@ -142,12 +142,12 @@ bool IsValidInt (char input[]) {
    char** endPtr = NULL;
    int strLength = (int)strlen (input);
    long long int num = strtoll (str, endPtr, 10);
-   if (strLength > 11 || !(num >= (signed)2147483648 && num <= 2147483647) || input[0] == '\n') return false;
+   if (input[strLength - 1] != '\n' || !(num >= -2147483647 && num <= 2147483647) || input[0] == '\n') return false;
    if (input[0] == '-' && input[1] != '\n') {
-      for (int k = 1; k < strLength; k++)
+      for (int k = 1; k < strLength - 1; k++)
          if (!(isdigit (input[k]))) return false;
    } else {
-      for (int j = 0; j < strLength; j++)
+      for (int j = 0; j < strLength - 1; j++)
          if (!(isdigit (input[j]))) return false;
    }
    return true;
@@ -237,6 +237,7 @@ int BinarySearch (int target, int array[], int arrSize) {
 bool IsValidChoice (char choice[]) {
    return (choice[1] == '\n' && (choice[0] >= '1' && choice[0] <= '6'));
 }
+
 bool IsValidChoiceMenu (char choice[]) {
    return (choice[1] == '\n' && (choice[0] >= '1' && choice[0] <= '3'));
 }
@@ -277,6 +278,7 @@ void UnitTest () {
 void TestInputMethod () {
    printf ("\nTest GetArray method:\n");
    int* arr;
+   printf ("Please enter the integers separated by a single space.");
    int arrSize, ret = GetArray (&arr, &arrSize), target, ret1;
    if (ret == 1 || ret == 0) printf (COLOR_GREEN"\nPassed\n"COLOR_RESET);
    else printf (COLOR_YELLOW"\nFailed\n"COLOR_RESET);
@@ -288,8 +290,8 @@ void TestInputMethod () {
 
 void TestValidateMethod () {
    printf ("\nIsValidInt method\n");
-   char input[][20] = { "21312","-23213","231231P312","213223123123213","-1","0","\n" };
-   int expOut[] = { 1,1,0,0,1,1,0 }, ret = 0;
+   char input[][20] = { " \n","-2147483647\n","2147483647\n","213223123123213\n","-1\n","0\n","\n" };
+   int expOut[] = { 0,1,1,0,1,1,0 }, ret = 0;
    for (int i = 0; i < 7; i++) {
       ret = IsValidInt (input[i]);
       printf ("\ninput:%s->Return %d", input[i], ret);
@@ -323,17 +325,19 @@ void TestSortMethod () {
          isValid = false;
       }
       if (!isExit && isValid) {
-         int input11[][20] = { {2,1,3,1,2},{-2,3,2,1,3},{2,12,23,3434,43,435,34,-23 },{34,234,34,4,3,4} };
-         int input12[] = { 5,5,8,6 }, expOut1[][20] = { {1,1,2,2,3},{-2,1,2,3,3},{-23,2,12,23,34,43,435,3434},{3,4,4,34,34,234} };
-         for (int i = 0; i < 4; i++) {
+         int input11[][20] = { {2},{1,2,3},{3,2,1},{0,1,2,3,-2147483647,2147483647},
+            { 2,1,3,1,2 },{-2,3,2,1,3},{2,12,23,3434,43,435,34,-23 },{34,234,34,4,3,4} };
+         int input12[] = { 1,3,3,6,5,5,8,6 }, expOut1[][20] = { {2},{1,2,3},{1,2,3},{-2147483647,0,1,2,3,2147483647},
+            { 1,1,2,2,3 },{-2,1,2,3,3},{-23,2,12,23,34,43,435,3434},{3,4,4,34,34,234} };
+         for (int i = 0; i < 8; i++) {
             bool isEqual = true;
             printf ("\ninput:");
-            for (int j = 0; j < input12[i]; j++)printf ("%d,", input11[i][j]);
+            for (int j = 0; j < input12[i]; j++)printf ("%d ", input11[i][j]);
             if (isHeap) HeapSort (input11[i], input12[i]);
             else BubbleSort (input11[i], input12[i]);
             printf ("\noutput:");
             for (int j = 0; j < input12[i]; j++) {
-               printf ("%d,", input11[i][j]);
+               printf ("%d ", input11[i][j]);
                if (input11[i][j] != expOut1[i][j]) isEqual = false;
             }
             if (isEqual) printf (COLOR_GREEN"\nPassed\n"COLOR_RESET);
@@ -346,12 +350,14 @@ void TestSortMethod () {
 
 void TestSearchMethod () {
    printf ("\nBinarySearch method\n");
-   int input21[][20] = { {2,1,3,1,2},{-2,-2,-2,1,-3},{2,12,23,3434,43,435,34,-23 },{34,234,34,4,3,4} };
-   int input22[] = { 5,5,8,6 }, target[] = { 3,-2,5,34 }, expOut3[] = { 4,1,-1,3 }, ret1 = 0;
-   for (int i = 0; i < 4; i++) {
+   int input21[][50] = { {1},{-2,-2,-2,-2,-2},{2,12,23,3434,43,435,34,-23 },{34,234,34,4,3,4},{1,0,2,-1,-2,-4,-5 },
+      {1,0,2,-1,-2,-4,-5,34,234,34,4,3,4,2,12,23,3434,43,435,34,-23},{-2147483647,2147483647} };
+   int input22[] = { 1,5,8,6,7,21,2 }, target[] = { 1,-2,-23,234,-3,10,2147483647 },
+      expOut3[] = { 0,0,0,5,-1,-1,1 }, ret1 = 0;
+   for (int i = 0; i < 7; i++) {
       HeapSort (input21[i], input22[i]);
       printf ("\nInput:");
-      for (int j = 0; j < input22[i]; j++)printf ("%d,", input21[i][j]);
+      for (int j = 0; j < input22[i]; j++)printf ("%d ", input21[i][j]);
       ret1 = BinarySearch (target[i], input21[i], input22[i]);
       printf ("\nTarget:%d->Index:%d\n", target[i], ret1);
       if (ret1 == expOut3[i]) printf (COLOR_GREEN"Passed\n"COLOR_RESET);
@@ -382,7 +388,7 @@ void ManualTest () {
                   switch (choice[0]) {
                   case '1':
                      do {
-                        printf ("\nHeap Sort\n");
+                        printf ("\nHeap Sort\nPlease enter the integers separated by a single space.");
                         if (GetArray (&array, &arrSize) == 1) {
                            HeapSort (array, arrSize);
                            printf ("output:");
@@ -393,7 +399,7 @@ void ManualTest () {
                      break;
                   case '2':
                      do {
-                        printf ("\nBubble sort\n");
+                        printf ("\nBubble sort\nPlease enter the integers separated by a single space.");
                         if (GetArray (&array, &arrSize) == 1) {
                            BubbleSort (array, arrSize);
                            printf ("output:");
@@ -412,6 +418,7 @@ void ManualTest () {
             break;
          case '2':
             do {
+               printf ("Please enter the integers separated by a single space.");
                if (GetArray (&array, &arrSize) == 1 && GetTarget (&target) == 1) {
                   HeapSort (array, arrSize);
                   printf ("Sorted array:");
@@ -431,5 +438,5 @@ void ManualTest () {
 }
 
 void Display (int* array, int arrSize) {
-   for (int i = 0; i < arrSize; i++) printf ("%d,", array[i]);
+   for (int i = 0; i < arrSize; i++) printf ("%d ", array[i]);
 }
