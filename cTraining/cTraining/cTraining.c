@@ -301,8 +301,9 @@ void TestValidateMethod () {
 }
 
 void TestSortMethod () {
-   bool isExit = false, isHeap = false, isBubble = false, isValid = true;
+   bool isExit = false;
    do {
+      bool isHeap = false, isBubble = false, isValid = true;;
       printf ("\n__________________________\nMenu:\nHeap sort   -> Enter 1\nBubble sort -> Enter 2\nBack        -> Enter 3");
       printf ("\n__________________________\nChoice:");
       char choice[3];
@@ -366,11 +367,12 @@ void TestSearchMethod () {
 }
 
 void ManualTest () {
-   bool isExit1 = false, isExit2 = false;
+   bool isExit1 = false;
    char choice[3];
    int* array = NULL;
    int arrSize = 0, target;
    do {
+      bool isExit2 = false;
       printf ("\n___________________\nManual test:\nSort    -> Enter 1\n");
       printf ("Search  -> Enter 2\nBack    -> Enter 3\n___________________\nChoice:");
       fgets (choice, 3, stdin);
