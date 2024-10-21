@@ -3,7 +3,7 @@
 // Copyright (c) Metamation India.
 // ------------------------------------------------------------------
 // cTraining.c
-// Implemented Heap Sort and Bubble Sort to sort an integer array in ascending order.
+// Implemented Heap Sort to sort an integer array in ascending order.
 // implemented Binary Search to find the index position of a specified element (zero-based).
 // ------------------------------------------------------------------------------------------------
 
@@ -38,9 +38,6 @@ void HeapSort (int arr[], int arrSize);
 /// <summary>Test all the methods.</summary>
 void UnitTest ();
 
-/// <summary>Sort the given integer array.</summary>
-void BubbleSort (int arr[], int arrSize);
-
 void TestInputMethod ();
 
 void TestSortMethod ();
@@ -63,6 +60,9 @@ void ManualTest ();
 
 /// <summary>Display the elements in the given array.</summary>
 void Display (int* array, int arrSize);
+
+/// <summary>To build a maximum heap.</summary>
+void BuildMaxHeap (int index, int arrSize, int arr[]);
 
 int main () {
    UnitTest ();
@@ -160,53 +160,26 @@ void ClearBufferInput () {
 
 void HeapSort (int arr[], int arrSize) {
    // Build a max heap
-   for (int noOfPid = (int)round ((arrSize / 2) - 0.5) - 1; noOfPid >= 0; noOfPid--) {
-      for (int i = (int)round ((arrSize / 2) - 0.5) - 1; i >= 0; i--) {
-         int left = 2 * i + 1, right = 2 * i + 2;
-         if (left < arrSize && (arr[left] > arr[i])) {
-            int temp1 = arr[i];
-            arr[i] = arr[left];
-            arr[left] = temp1;
-         }
-         if (right < arrSize && (arr[right] > arr[i])) {
-            int temp2 = arr[i];
-            arr[i] = arr[right];
-            arr[right] = temp2;
-         }
-      }
-   }
+   for (int parentIndex = (int)round ((arrSize / 2) - 0.5) - 1; parentIndex >= 0; parentIndex--)
+      BuildMaxHeap (parentIndex, arrSize, arr);
    for (int i = arrSize - 1; i > 0; i--) {
       // Replace the last element with the first element and delete the first element.
       int root = arr[0];
       arr[0] = arr[i];
       arr[i] = root;
-      for (int noOfPid = (int)round ((i / 2) - 0.5) - 1; noOfPid >= 0; noOfPid--) {
-         for (int j = (int)round ((i / 2) - 0.5) - 1; j >= 0; j--) {
-            int left = 2 * j + 1, right = 2 * j + 2;
-            if (left < i && (arr[left] > arr[j])) {
-               int temp1 = arr[j];
-               arr[j] = arr[left];
-               arr[left] = temp1;
-            }
-            if (right < i && (arr[right] > arr[j])) {
-               int temp2 = arr[j];
-               arr[j] = arr[right];
-               arr[right] = temp2;
-            }
-         }
-      }
+      BuildMaxHeap (0, i, arr);
    }
 }
 
-void BubbleSort (int arr[], int arrSize) {
-   for (int i = 0; i < arrSize; i++) {
-      for (int j = i + 1; j < arrSize; j++) {
-         if (arr[i] > arr[j]) {
-            int temp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = temp;
-         }
-      }
+void BuildMaxHeap (int index, int arrSize, int arr[]) {
+   int largest = index, left = 2 * index + 1, right = 2 * index + 2;
+   if (left < arrSize && arr[largest] < arr[left]) largest = left;
+   if (right < arrSize && arr[largest] < arr[right])largest = right;
+   if (largest != index) {
+      int temp = arr[index];
+      arr[index] = arr[largest];
+      arr[largest] = temp;
+      BuildMaxHeap (largest, arrSize, arr);
    }
 }
 
@@ -301,52 +274,25 @@ void TestValidateMethod () {
 }
 
 void TestSortMethod () {
-   bool isExit = false;
-   do {
-      bool isHeap = false, isBubble = false, isValid = true;;
-      printf ("\n__________________________\nMenu:\nHeap sort   -> Enter 1\nBubble sort -> Enter 2\nBack        -> Enter 3");
-      printf ("\n__________________________\nChoice:");
-      char choice[3];
-      fgets (choice, 3, stdin);
-      if (IsValidChoiceMenu (choice)) {
-         switch (choice[0]) {
-         case '1':
-            isHeap = true;
-            printf ("\nHeap sort\n");
-            break;
-         case '2':
-            isBubble = true;
-            printf ("\nBubble sort\n");
-            break;
-         case '3':isExit = true;
-         }
-      } else {
-         printf (COLOR_RED"\nInvalid choice!\n"COLOR_RESET);
-         if (choice[strlen (choice) - 1] != '\n') ClearBufferInput ();
-         isValid = false;
-      }
-      if (!isExit && isValid) {
-         int input11[][20] = { {2},{1,2,3},{3,2,1},{0,1,2,3,-2147483647,2147483647},
+   printf ("\nHeap sort");
+   int input11[][20] = { {2},{1,2,3},{3,2,1},{0,1,2,3,-2147483647,2147483647},
             { 2,1,3,1,2 },{-2,3,2,1,3},{2,12,23,3434,43,435,34,-23 },{34,234,34,4,3,4} };
-         int input12[] = { 1,3,3,6,5,5,8,6 }, expOut1[][20] = { {2},{1,2,3},{1,2,3},{-2147483647,0,1,2,3,2147483647},
-            { 1,1,2,2,3 },{-2,1,2,3,3},{-23,2,12,23,34,43,435,3434},{3,4,4,34,34,234} };
-         for (int i = 0; i < 8; i++) {
-            bool isEqual = true;
-            printf ("\ninput :");
-            for (int j = 0; j < input12[i]; j++)printf ("%d ", input11[i][j]);
-            if (isHeap) HeapSort (input11[i], input12[i]);
-            else BubbleSort (input11[i], input12[i]);
-            printf ("\noutput:");
-            for (int j = 0; j < input12[i]; j++) {
-               printf ("%d ", input11[i][j]);
-               if (input11[i][j] != expOut1[i][j]) isEqual = false;
-            }
-            if (isEqual) printf (COLOR_GREEN"\nPassed\n"COLOR_RESET);
-            else printf (COLOR_YELLOW"\nFailed\n"COLOR_RESET);
-            printf ("\n");
-         }
+   int input12[] = { 1,3,3,6,5,5,8,6 }, expOut1[][20] = { {2},{1,2,3},{1,2,3},{-2147483647,0,1,2,3,2147483647},
+      { 1,1,2,2,3 },{-2,1,2,3,3},{-23,2,12,23,34,43,435,3434},{3,4,4,34,34,234} };
+   for (int i = 0; i < 8; i++) {
+      bool isEqual = true;
+      printf ("\ninput :");
+      for (int j = 0; j < input12[i]; j++)printf ("%d ", input11[i][j]);
+      HeapSort (input11[i], input12[i]);
+      printf ("\noutput:");
+      for (int j = 0; j < input12[i]; j++) {
+         printf ("%d ", input11[i][j]);
+         if (input11[i][j] != expOut1[i][j]) isEqual = false;
       }
-   } while (!isExit);
+      if (isEqual) printf (COLOR_GREEN"\nPassed\n"COLOR_RESET);
+      else printf (COLOR_YELLOW"\nFailed\n"COLOR_RESET);
+      printf ("\n");
+   }
 }
 
 void TestSearchMethod () {
@@ -377,47 +323,18 @@ void ManualTest () {
       printf ("Search  -> Enter 2\nBack    -> Enter 3\n___________________\nChoice:");
       fgets (choice, 3, stdin);
       if (IsValidChoiceMenu (choice)) {
-         bool isExit5 = false;
-         bool isExit6 = false;
+         bool isExit3 = false, isExit5 = false, isExit6 = false;
          switch (choice[0]) {
          case '1':
             do {
-               printf ("\n__________________________\nMenu:\nHeap sort   -> Enter 1\nBubble sort -> Enter 2\nBack        -> Enter 3");
-               printf ("\n__________________________\nChoice:");
-               char choice[3];
-               bool isExit3 = false, isExit4 = false;
-               fgets (choice, 3, stdin);
-               if (IsValidChoiceMenu (choice)) {
-                  switch (choice[0]) {
-                  case '1':
-                     do {
-                        printf ("\nHeap Sort\nPlease enter the integers separated by a single space.");
-                        if (GetArray (&array, &arrSize) == 1) {
-                           HeapSort (array, arrSize);
-                           printf ("output:");
-                           Display (array, arrSize);
-                           isExit3 = true;
-                        }
-                     } while (!isExit3);
-                     break;
-                  case '2':
-                     do {
-                        printf ("\nBubble sort\nPlease enter the integers separated by a single space.");
-                        if (GetArray (&array, &arrSize) == 1) {
-                           BubbleSort (array, arrSize);
-                           printf ("output:");
-                           Display (array, arrSize);
-                           isExit4 = true;
-                        }
-                     } while (!isExit4);
-                     break;
-                  case '3': isExit2 = true;
-                  }
-               } else {
-                  printf (COLOR_RED"\nInvalid choice!\n"COLOR_RESET);
-                  if (choice[strlen (choice) - 1] != '\n') ClearBufferInput ();
+               printf ("\nHeap Sort\nPlease enter the integers separated by a single space.");
+               if (GetArray (&array, &arrSize) == 1) {
+                  HeapSort (array, arrSize);
+                  printf ("output:");
+                  Display (array, arrSize);
+                  isExit3 = true;
                }
-            } while (!isExit2);
+            } while (!isExit3);
             break;
          case '2':
             do {
