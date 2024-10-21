@@ -13,7 +13,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <malloc.h>
-#include<stdlib.h>
+#include <stdlib.h>
 
 #define COLOR_RED     "\x1b[31m"
 #define COLOR_GREEN   "\x1b[32m"
@@ -87,7 +87,7 @@ int GetArray (int** arr, int* arrSize) {
    char c, subArr[13] = "0";
    int i = 0, n = 1, index = 0;
    int* intArr = (int*)malloc (n * sizeof (int));
-   printf ("\nInput:");
+   printf ("\nInput :");
    while ((c = getchar ()) != '\n') {
       if (i > 11) {
          printf (COLOR_RED"\nInvalid input!\n"COLOR_RESET);
@@ -294,7 +294,7 @@ void TestValidateMethod () {
    int expOut[] = { 0,1,1,0,1,1,0 }, ret = 0;
    for (int i = 0; i < 7; i++) {
       ret = IsValidInt (input[i]);
-      printf ("\ninput:%s->Return %d", input[i], ret);
+      printf ("\ninput :%s->Return %d", input[i], ret);
       if (ret == expOut[i]) printf (COLOR_GREEN"\nPassed\n"COLOR_RESET);
       else printf (COLOR_YELLOW"\nFailed\n"COLOR_RESET);
    }
@@ -332,7 +332,7 @@ void TestSortMethod () {
             { 1,1,2,2,3 },{-2,1,2,3,3},{-23,2,12,23,34,43,435,3434},{3,4,4,34,34,234} };
          for (int i = 0; i < 8; i++) {
             bool isEqual = true;
-            printf ("\ninput:");
+            printf ("\ninput :");
             for (int j = 0; j < input12[i]; j++)printf ("%d ", input11[i][j]);
             if (isHeap) HeapSort (input11[i], input12[i]);
             else BubbleSort (input11[i], input12[i]);
@@ -357,7 +357,7 @@ void TestSearchMethod () {
       expOut3[] = { 0,0,0,5,-1,-1,1 }, ret1 = 0;
    for (int i = 0; i < 7; i++) {
       HeapSort (input21[i], input22[i]);
-      printf ("\nInput:");
+      printf ("\nInput :");
       for (int j = 0; j < input22[i]; j++)printf ("%d ", input21[i][j]);
       ret1 = BinarySearch (target[i], input21[i], input22[i]);
       printf ("\nTarget:%d->Index:%d\n", target[i], ret1);
@@ -378,6 +378,7 @@ void ManualTest () {
       fgets (choice, 3, stdin);
       if (IsValidChoiceMenu (choice)) {
          bool isExit5 = false;
+         bool isExit6 = false;
          switch (choice[0]) {
          case '1':
             do {
@@ -421,11 +422,16 @@ void ManualTest () {
          case '2':
             do {
                printf ("Please enter the integers separated by a single space.");
-               if (GetArray (&array, &arrSize) == 1 && GetTarget (&target) == 1) {
-                  HeapSort (array, arrSize);
-                  printf ("Sorted array:");
-                  Display (array, arrSize);
-                  printf ("\nindex:%d", BinarySearch (target, array, arrSize));
+               if (GetArray (&array, &arrSize) == 1) {
+                  do {
+                     if (GetTarget (&target) == 1) {
+                        HeapSort (array, arrSize);
+                        printf ("Sorted array:");
+                        Display (array, arrSize);
+                        printf ("\nindex:%d", BinarySearch (target, array, arrSize));
+                        isExit6 = true;
+                     }
+                  } while (!isExit6);
                   isExit5 = true;
                }
             } while (!isExit5);
