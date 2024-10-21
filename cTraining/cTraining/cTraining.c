@@ -112,9 +112,11 @@ bool IsPalindromeText (char sent[]) {
 
 int Display (char sent[]) {
    if (IsPalindromeText (sent)) {
+      printf ("output:");
       printf (GREEN_COLOR"Palindrome\n"RESET_COLOR);
       return SUCCESSFUL;
    }
+   printf ("output:");
    printf (YELLOW_COLOR"Not a Palindrome\n"RESET_COLOR);
    return UNSUCCESSFUL;
 }
@@ -166,11 +168,11 @@ long long int ReverseNum (int num) {
 int DisplayInt (int num) {
    long long int revNumber = ReverseNum (num);
    if (num >= 0 && revNumber == num) {
-      printf ("output:%lld\n", revNumber);
+      printf ("\noutput:%lld\n", revNumber);
       printf (GREEN_COLOR"Palindrome\n"RESET_COLOR);
       return SUCCESSFUL;
    } else {
-      printf ("output:%lld\n", revNumber);
+      printf ("\noutput:%lld\n", revNumber);
       printf (YELLOW_COLOR"Not a Palindrome\n"RESET_COLOR);
       return UNSUCCESSFUL;
    }
@@ -244,22 +246,42 @@ void AutomationTest () {
       printf ("\ncase%d :\n", n);
       printf ("\nPalindrome checker:\n");
       printf ("\ninput:%s", textTest[i]);
-      printf ("output:");
-      for (int j = (int)strlen (textTest[i]) - 2; j >= 0; j--) printf ("%c", textTest[i][j]);
-      printf ("\n");
+      printf ("\nExpected output:");
+      switch (expOut1[i]) {
+      case 1:
+         printf (GREEN_COLOR"Palindrome\n"RESET_COLOR);
+         break;
+      case 0:
+         printf (YELLOW_COLOR"Not a Palindrome\n"RESET_COLOR);
+         break;
+      case -1:
+         printf (RED_COLOR"Invalid!\n"RESET_COLOR);
+      }
       (TestPalindromeMethod (textTest[i]) == expOut1[i]) ? printf (GREEN_COLOR"\nPassed!\n"RESET_COLOR) : printf (YELLOW_COLOR"\nFailed\n"RESET_COLOR);
       printf ("\nReverse Number:\n");
       printf ("\ninput:%s", numTest[i]);
+      (expOut2[i] == -1) ? printf ("\nExpected output:"), printf (RED_COLOR"Invalid!\n"RESET_COLOR) : printf ("\nExpected output:");
       (TestReverseNumMethod (numTest[i]) == expOut2[i]) ? printf (GREEN_COLOR"\nPassed!\n"RESET_COLOR) : printf (YELLOW_COLOR"\nFailed\n"RESET_COLOR);
    }
 }
 
 int TestPalindromeMethod (char textTest[]) {
    if (IsValidText (textTest)) return Display (textTest);
-   else return -1;
+   else {
+      printf ("output:");
+      printf (RED_COLOR"Invalid!\n"RESET_COLOR);
+      return -1;
+   }
 }
 
 int TestReverseNumMethod (char numTest[]) {
-   if (IsValidInt (numTest)) return DisplayInt (atoi (numTest));
-   else return -1;
+   if (IsValidInt (numTest)) {
+      for (int j = strlen (numTest)-2; j >=0 ; j--)printf ("%c", numTest[j]);
+      return DisplayInt (atoi (numTest));
+   }
+   else {
+      printf ("output:");
+      printf (RED_COLOR"Invalid!\n"RESET_COLOR);
+      return -1;
+   }
 }
