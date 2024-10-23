@@ -184,27 +184,14 @@ void BuildMaxHeap (int index, int arrSize, int arr[]) {
 }
 
 int BinarySearch (int target, int array[], int arrSize) {
-   bool isFound = false;
-   int midIndex = (arrSize % 2 == 0) ? (int)round ((arrSize / 2) - 0.5) - 1 : (int)round ((arrSize / 2) - 0.5);
-   int minIndex = arrSize - 1;
-   if (array[midIndex] == target) {
-      isFound = true;
-      minIndex = midIndex;
-   }
-   if (array[midIndex] < target) {
-      for (int i = midIndex + 1; i < arrSize; i++) {
-         if (array[i] == target && minIndex >= i) return i;
-      }
-   } else {
-      for (int i = midIndex - 1; i >= 0; i--) {
-         if (array[i] == target && minIndex >= i) {
-            minIndex = i;
-            isFound = true;
-         }
-      }
-   }
-   if (isFound) return minIndex;
-   else return -1;
+   int low = 0, high = arrSize - 1, index = -1, mid;
+   do {
+      mid = (low + high) / 2;
+      if (array[mid] < target)low = mid + 1;
+      else high = mid - 1;
+      if (array[mid] == target) index = mid;
+   } while (low <= high);
+   return index;
 }
 
 bool IsValidChoice (char choice[]) {
@@ -263,31 +250,31 @@ void TestInputMethod () {
 
 void TestValidateMethod () {
    printf ("\nIsValidInt method\n");
-   char input[][20] = { " \n","-2147483647\n","2147483647\n","213223123123213\n","-1\n","0\n","\n" };
-   int expOut[] = { 0,1,1,0,1,1,0 }, ret = 0;
+   char ipArrays[][20] = { " \n","-2147483647\n","2147483647\n","213223123123213\n","-1\n","0\n","\n" };
+   int expOp[] = { 0,1,1,0,1,1,0 }, ret = 0;
    for (int i = 0; i < 7; i++) {
-      ret = IsValidInt (input[i]);
-      printf ("\ninput :%s->Return %d", input[i], ret);
-      if (ret == expOut[i]) printf (COLOR_GREEN"\nPassed\n"COLOR_RESET);
+      ret = IsValidInt (ipArrays[i]);
+      printf ("\ninput :%s->Return %d", ipArrays[i], ret);
+      if (ret == expOp[i]) printf (COLOR_GREEN"\nPassed\n"COLOR_RESET);
       else printf (COLOR_YELLOW"\nFailed\n"COLOR_RESET);
    }
 }
 
 void TestSortMethod () {
    printf ("\nHeap sort");
-   int input11[][20] = { {2},{1,2,3},{3,2,1},{0,1,2,3,-2147483647,2147483647},
+   int ipArrays[][20] = { {2},{1,2,3},{3,2,1},{0,1,2,3,-2147483647,2147483647},
             { 2,1,3,1,2 },{-2,3,2,1,3},{2,12,23,3434,43,435,34,-23 },{34,234,34,4,3,4} };
-   int input12[] = { 1,3,3,6,5,5,8,6 }, expOut1[][20] = { {2},{1,2,3},{1,2,3},{-2147483647,0,1,2,3,2147483647},
+   int ipArraySizes[] = { 1,3,3,6,5,5,8,6 }, expOp[][20] = { {2},{1,2,3},{1,2,3},{-2147483647,0,1,2,3,2147483647},
       { 1,1,2,2,3 },{-2,1,2,3,3},{-23,2,12,23,34,43,435,3434},{3,4,4,34,34,234} };
    for (int i = 0; i < 8; i++) {
       bool isEqual = true;
       printf ("\ninput :");
-      for (int j = 0; j < input12[i]; j++)printf ("%d ", input11[i][j]);
-      HeapSort (input11[i], input12[i]);
+      for (int j = 0; j < ipArraySizes[i]; j++)printf ("%d ", ipArrays[i][j]);
+      HeapSort (ipArrays[i], ipArraySizes[i]);
       printf ("\noutput:");
-      for (int j = 0; j < input12[i]; j++) {
-         printf ("%d ", input11[i][j]);
-         if (input11[i][j] != expOut1[i][j]) isEqual = false;
+      for (int j = 0; j < ipArraySizes[i]; j++) {
+         printf ("%d ", ipArrays[i][j]);
+         if (ipArrays[i][j] != expOp[i][j]) isEqual = false;
       }
       if (isEqual) printf (COLOR_GREEN"\nPassed\n"COLOR_RESET);
       else printf (COLOR_YELLOW"\nFailed\n"COLOR_RESET);
@@ -297,17 +284,17 @@ void TestSortMethod () {
 
 void TestSearchMethod () {
    printf ("\nBinarySearch method\n");
-   int input21[][50] = { {1},{-2,-2,-2,-2,-2},{2,12,23,3434,43,435,34,-23 },{34,234,34,4,3,4},{1,0,2,-1,-2,-4,-5 },
+   int ipArrays[][50] = { {1},{-2,-2,-2,-2,-2},{2,12,23,3434,43,435,34,-23 },{34,234,34,4,3,4},{1,0,2,-1,-2,-4,-5 },
       {1,0,2,-1,-2,-4,-5,34,234,34,4,3,4,2,12,23,3434,43,435,34,-23},{-2147483647,2147483647} };
-   int input22[] = { 1,5,8,6,7,21,2 }, target[] = { 1,-2,-23,234,-3,10,2147483647 },
-      expOut3[] = { 0,0,0,5,-1,-1,1 }, ret1 = 0;
+   int ipArraySizes[] = { 1,5,8,6,7,21,2 }, targets[] = { 1,-2,-23,234,-3,10,2147483647 },
+      expOut[] = { 0,0,0,5,-1,-1,1 }, ret = 0;
    for (int i = 0; i < 7; i++) {
-      HeapSort (input21[i], input22[i]);
+      HeapSort (ipArrays[i], ipArraySizes[i]);
       printf ("\nInput :");
-      for (int j = 0; j < input22[i]; j++)printf ("%d ", input21[i][j]);
-      ret1 = BinarySearch (target[i], input21[i], input22[i]);
-      printf ("\nTarget:%d->Index:%d\n", target[i], ret1);
-      if (ret1 == expOut3[i]) printf (COLOR_GREEN"Passed\n"COLOR_RESET);
+      Display (ipArrays[i], ipArraySizes[i]);
+      ret = BinarySearch (targets[i], ipArrays[i], ipArraySizes[i]);
+      printf ("\nTarget:%d->Index:%d\n", targets[i], ret);
+      if (ret == expOut[i]) printf (COLOR_GREEN"Passed\n"COLOR_RESET);
       else printf (COLOR_YELLOW"Failed\n"COLOR_RESET);
    }
 }
