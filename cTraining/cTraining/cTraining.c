@@ -69,9 +69,25 @@ int main () {
 }
 
 int GetTarget (int* target) {
-   char input[13] = "0";
+   char input[14] = "0", c;
    printf ("\nTarget:");
-   fgets (input, 13, stdin);
+   int i = 0, it = 0;
+   bool isLeadingZero = true;
+   while ((c = getchar ()) != '\n') {
+      input[i] = c;
+      if (isLeadingZero && input[i] == '0') {
+         i = (input[0] == '-') ? 2 : 1;
+         continue;
+      } else if (isLeadingZero) {
+         if (input[0] == '-') {
+            it++;
+            if (it > 1) isLeadingZero = false;
+         } else isLeadingZero = false;
+      }
+      i++;
+   }
+   input[i] = '\n';
+   input[i + 1] = '\0';
    if (IsValidInt (input)) {
       *target = atoi (input);
       return 1;
@@ -83,19 +99,29 @@ int GetTarget (int* target) {
 }
 
 int GetArray (int** arr, int* arrSize) {
-   bool isExit = false;
-   char c, subArr[13] = "0";
-   int i = 0, n = 1, index = 0;
+   bool isLeadingZero = true;
+   char c, subArr[14] = "0";
+   int i = 0, n = 1, index = 0, it = 0;
    int* intArr = (int*)malloc (n * sizeof (int));
    printf ("\nInput :");
    while ((c = getchar ()) != '\n') {
-      if (i > 11) {
+      if (i > 12) {
          printf (COLOR_RED"\nInvalid input!\n"COLOR_RESET);
          ClearBufferInput ();
          i = 0;
          return 0;
       }
-      subArr[i++] = c;
+      subArr[i] = c;
+      if (isLeadingZero && subArr[i] == '0') {
+         i = (subArr[0] == '-') ? 2 : 1;
+         continue;
+      } else if (isLeadingZero) {
+         if (subArr[0] == '-') {
+            it++;
+            if (it > 1) isLeadingZero = false;
+         } else isLeadingZero = false;
+      }
+      i++;
       if (c == ' ') {
          subArr[i - 1] = '\n';
          subArr[i] = '\0';
@@ -111,6 +137,8 @@ int GetArray (int** arr, int* arrSize) {
             i = 0;
             return 0;
          }
+         isLeadingZero = true;
+         it = 0;
          i = 0;
       }
    }
@@ -118,7 +146,7 @@ int GetArray (int** arr, int* arrSize) {
    if (i > 0) {
       subArr[i] = '\n';
       subArr[i + 1] = '\0';
-      strcpy_s (subArr, 13, subArr);
+      strcpy_s (subArr, 14, subArr);
       if (IsValidInt (subArr)) {
          intArr[index] = atoi (subArr);
          *arrSize = n;
@@ -142,14 +170,11 @@ bool IsValidInt (char input[]) {
    char** endPtr = NULL;
    int strLength = (int)strlen (input);
    long long int num = strtoll (str, endPtr, 10);
-   if (input[strLength - 1] != '\n' || !(num >= -2147483647 && num <= 2147483647) || input[0] == '\n') return false;
-   if (input[0] == '-' && input[1] != '\n') {
-      for (int k = 1; k < strLength - 1; k++)
-         if (!(isdigit (input[k]))) return false;
-   } else {
-      for (int j = 0; j < strLength - 1; j++)
-         if (!(isdigit (input[j]))) return false;
-   }
+   if (input[strLength - 1] != '\n' || !(num >= -2147483647 && num <= 2147483647)
+      || input[0] == '\n') return false;
+   int k = input[0] == '-' && input[1] != '\n';
+   for (; k < strLength - 1; k++)
+      if (!(isdigit (input[k]))) return false;
    return true;
 }
 
@@ -160,7 +185,7 @@ void ClearBufferInput () {
 
 void HeapSort (int arr[], int arrSize) {
    // Build a max heap
-   for (int parentIndex = (int)round ((arrSize / 2) - 0.5) - 1; parentIndex >= 0; parentIndex--)
+   for (int parentIndex = (int)floor (arrSize / 2); parentIndex >= 0; parentIndex--)
       BuildMaxHeap (parentIndex, arrSize, arr);
    for (int i = arrSize - 1; i > 0; i--) {
       // Replace the last element with the first element and delete the first element.
@@ -206,8 +231,10 @@ void UnitTest () {
    bool isExit = false;
    char choice[3];
    do {
-      printf ("\n___________________________________\nMain Menu:\nTest Input method   -> Enter 1\nTest Validate method-> Enter 2\nTest Sort method    -> Enter 3\n");
-      printf ("Test Search method  -> Enter 4\nManual test         -> Enter 5\nExit                -> Enter 6\n___________________________________\nChoice:");
+      printf ("\n___________________________________\nMain Menu:\nTest Input method   -> Enter 1\n");
+      printf ("Test Validate method-> Enter 2\nTest Sort method    -> Enter 3\n");
+      printf ("Test Search method  -> Enter 4\nManual test         -> Enter 5\nExit                -> ");
+      printf ("Enter 6\n___________________________________\nChoice:");
       fgets (choice, 3, stdin);
       if (IsValidChoice (choice)) {
          switch (choice[0]) {
@@ -250,7 +277,7 @@ void TestInputMethod () {
 
 void TestValidateMethod () {
    printf ("\nIsValidInt method\n");
-   char ipArrays[][20] = { " \n","-2147483647\n","2147483647\n","213223123123213\n","-1\n","0\n","\n" };
+   char ipArrays[][50] = { " \n","-2147483647\n","2147483647\n","213223123123213\n","-1\n","000000000000000000000000\n","\n" };
    int expOp[] = { 0,1,1,0,1,1,0 }, ret = 0;
    for (int i = 0; i < 7; i++) {
       ret = IsValidInt (ipArrays[i]);
