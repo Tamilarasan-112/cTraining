@@ -129,6 +129,9 @@
   <ItemGroup>
     <ClCompile Include="cTraining.c" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="ActualOut.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
