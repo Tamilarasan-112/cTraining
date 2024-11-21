@@ -154,7 +154,7 @@
     <Text Include="outputFile.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="StateDiagram.jpg" />
+    <Image Include="..\..\..\..\Users\ramalingamta\Downloads\StateDiagram.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
