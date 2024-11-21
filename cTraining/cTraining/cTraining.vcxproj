@@ -153,6 +153,9 @@
     <Text Include="ip9.txt" />
     <Text Include="outputFile.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="StateDiagram.jpg" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
