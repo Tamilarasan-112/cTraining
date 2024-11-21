@@ -27,10 +27,10 @@ int main (int argc, char** argv) {
       printf ("Usage: %s <%s>\n,", argv[0], argv[1]);
       return -1;
    }
-   char inputFile[9], ExpOutputFile[13];
+   char inputFile[20], ExpOutputFile[28];
    for (int i = 1; i <= NTESTS; i++) {
-      sprintf (inputFile, "ip%d.txt", i);
-      sprintf (ExpOutputFile, "Exp-op%d.txt", i);
+      sprintf (inputFile, "Inputfiles/ip%d.txt", i);
+      sprintf (ExpOutputFile, "Referencefiles/Exp-op%d.txt", i);
       char ec, oc;
       int bitNo = 0;
       bool isError = false;
