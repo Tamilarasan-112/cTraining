@@ -3,7 +3,6 @@
 // Copyright (c) Metamation India.
 // ------------------------------------------------------------------
 // FSM.c
-// State diagram reference:file://cTraining/cTraining/StateDiagram.jpg
 //Implemented a Mealy machine that detects the pattern '0110' or '1101' in an input stream
 // Program on main branch.
 // ------------------------------------------------------------------------------------------------
