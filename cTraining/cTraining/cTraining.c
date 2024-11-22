@@ -74,6 +74,11 @@ int GetTarget (int* target) {
    int i = 0, it = 0;
    bool isLeadingZero = true;
    while ((c = getchar ()) != '\n') {
+      if (i > 12) {
+         printf (COLOR_RED"\nInvalid input!\n"COLOR_RESET);
+         ClearBufferInput ();
+         return 0;
+      }
       input[i] = c;
       if (isLeadingZero && input[i] == '0') {
          i = (input[0] == '-') ? 2 : 1;
@@ -277,9 +282,9 @@ void TestInputMethod () {
 
 void TestValidateMethod () {
    printf ("\nIsValidInt method\n");
-   char ipArrays[][50] = { " \n","-2147483647\n","2147483647\n","213223123123213\n","-1\n","000000000000000000000000\n","\n" };
-   int expOp[] = { 0,1,1,0,1,1,0 }, ret = 0;
-   for (int i = 0; i < 7; i++) {
+   char ipArrays[][50] = { " \n","-2147483647\n","2147483647\n","213223123123213\n","-1\n","000000000000000000000000\n","\n","-00000000000000000002147483647\n","-\n","-","ASD@11\n","1\n","23423\n" ,"-1221\n" };
+   int expOp[] = { 0,1,1,0,1,1,0,1,0,0,0,1,1,1}, ret = 0;
+   for (int i = 0; i < 14; i++) {
       ret = IsValidInt (ipArrays[i]);
       printf ("\ninput :%s->Return %d", ipArrays[i], ret);
       if (ret == expOp[i]) printf (COLOR_GREEN"\nPassed\n"COLOR_RESET);
