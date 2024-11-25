@@ -11,17 +11,22 @@
 #include <fcntl.h>
 #include <io.h>
 #include <stdbool.h>
-#include <locale.h>
+
 #pragma warning (disable : 4996)
+
+#define GREEN_COLOR   "\x1b[32m"
+#define YELLO_COLOR   "\x1b[33m"
+#define RESET_COLOR   "\x1b[0m"
 
 void DrawChess ();
 void DrawPieces (wchar_t pieces[], FILE* actualOut);
-void DrawSoldiers (wchar_t uniCode, bool black, FILE* actualOut);
+void DrawSoldiers (FILE* actualOut);
 void DrawGrit (FILE* actualOut);
 
-/// <summary>Print the unicode in console and actual output file.</summary?
+/// <summary>Print the unicode in console and actual output file.</summary>
 void print (wchar_t string[], FILE* actualout);
 
+/// <summary>To check all the characters printing correctly in order.</summary>
 void Test ();
 
 int main () {
@@ -30,21 +35,18 @@ int main () {
 }
 
 void DrawChess () {
-   setlocale (LC_ALL, "");
-   bool black = true;
-   wchar_t blackPieces[7] = { L'♖',L'♘',L'♗',L'♔',L'♕',L'♙' };
-   wchar_t whitePieces[7] = { L'♜',L'♞',L'♝',L'♚',L'♛',L'♟' };
+   wchar_t blackPieces[6] = { L'♖',L'♘',L'♗',L'♔',L'♕' };
+   wchar_t whitePieces[6] = { L'♜',L'♞',L'♝',L'♚',L'♛' };
    int a = _setmode (_fileno (stdout), _O_U16TEXT);
    FILE* actualOut = fopen ("ActualOut.txt", "w, ccs=UTF-8");
    print (L"┏━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┓\n", actualOut);
    DrawPieces (blackPieces, actualOut);
    print (L"\n┣━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━┫\n", actualOut);
-   DrawSoldiers (blackPieces[5], black, actualOut);
+   DrawSoldiers (actualOut);
    DrawGrit (actualOut);
-   black = false;
-   DrawSoldiers (whitePieces[5], black, actualOut);
+   DrawSoldiers (actualOut);
    print (L"\n┣━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━┫\n", actualOut);
-   DrawPieces (whitePieces, actualOut);
+   DrawPieces (whitePieces,actualOut);
    print (L"\n┗━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┛", actualOut);
    fclose (actualOut);
 }
@@ -64,12 +66,9 @@ void DrawPieces (wchar_t uniCode[], FILE* actualOut) {
    print (L"┃", actualOut);
 }
 
-void DrawSoldiers (wchar_t uniCode, bool black, FILE* actualOut) {
-   wchar_t string[5] = L"┃   ";
-   string[2] = uniCode;
+void DrawSoldiers (FILE* actualOut) {
    for (int i = 0; i < 8; i++) {
-      if (!black) string[3] = '\0';
-      print (string, actualOut);
+      print (L"┃ ♙ ", actualOut);
    }
    print (L"┃", actualOut);
 }
@@ -88,15 +87,15 @@ void print (wchar_t string[], FILE* actualOut) {
 }
 
 void Test () {
+   wprintf (L"\nTest:");
    wchar_t ec,ac;
+   bool isEqual = true;
    FILE* expOut = fopen ("ExpectedOutput.txt", "r, ccs=UTF-8"),*actOut = fopen ("ActualOut.txt", "r, ccs=UTF-8");
    if (actOut && expOut) {
       while ((fread (&ec, sizeof (wchar_t), 1, expOut) && fread (&ac, sizeof (wchar_t), 1, actOut)) == 1) {
-         bool isEqual = true;
-         wprintf (L"%lc  and %lc    ->", ec, ac);
          if (ec != ac) isEqual = false;
-         if (isEqual) wprintf (L"pass\n");
-         else wprintf (L"fail\n");
       }
+      if (isEqual) wprintf (L"Passed\n");
+      else wprintf (L"Failed\n");
    }
 }
