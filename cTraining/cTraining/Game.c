@@ -2,9 +2,8 @@
 // Training ~ A training program for new joiners at Metamation, Batch - July 2024.
 // Copyright (c) Metamation India.
 // ------------------------------------------------------------------
-// cTraining.c
-// Question 3 is implemented.
-// Program on main branch.
+// Game.c
+// Implemented the game for 2 players.
 // ------------------------------------------------------------------------------------------------
 
 #include <stdio.h>
@@ -20,15 +19,34 @@ struct point {
 
 typedef struct point points;
 
+/// <summary>Display the board.</summary>
 void Board (char arr[][5]);
+
+/// <summary>Get the input from the player.</summary>
 void Input (int* player);
+
+/// <summary>Return true if input is valid,else false.</summary>
 bool IsValidInput (char* playerInput);
-void MarkSymbols (int player, char arr[][5], char* sym, int index,int* counts);
+
+/// <summary>Marks the player's symbol on the board.</summary>
+void MarkSymbols (int player, char arr[][5], char* sym, int index, int* counts);
+
+/// <summary>To manually test all the methods.</summary>
 void ManualTest ();
+
+/// <summary>To automatically test all the methods.</summary>
 void AutomationTest ();
+
+/// <summary>To test the MarkSymbols method.</summary>
 int TestMarkSymbols (int input[], char expOut[][5]);
+
+/// <summary>To test the Check method.</summary>
 void TestCheck (char MarkedBoard[][5], int exp);
+
+/// <summary>Displays the winner or indicates a draw match.</summary>
 void DisplayWinner (int out);
+
+/// <summary>To test the IsValidInput method.</summary>
 void TestIsValidInput ();
 
 int main () {
@@ -36,7 +54,7 @@ int main () {
    AutomationTest ();
 }
 
-void MarkSymbols (int player, char arr[][5], char* sym, int index,int* counts) {
+void MarkSymbols (int player, char arr[][5], char* sym, int index, int* counts) {
    if (player <= 3) {
       if (isdigit (arr[0][player - 1])) {
          arr[0][player - 1] = sym[index];
@@ -123,17 +141,17 @@ void StartGame () {
       it++;
       printf ("Player%d:", i + 1);
       Input (&player);
-      MarkSymbols (player, arr, sym, i,&counts);
+      MarkSymbols (player, arr, sym, i, &counts);
       Board (arr);
       if (it >= 5) {
          ret = Check (arr, sym);
-         if (ret == 0) {
+         if (!ret) {
             printf ("\nPlayer1 is win\n");
             isWin = true;
-         } else if (ret == 1) {
+         } else if (ret) {
             printf ("\nPlayer2 is win\n");
             isWin = true;
-         } else if (counts==9) {
+         } else if (counts == 9) {
             printf ("\nDraw");
             isWin = true;
          }
@@ -171,10 +189,10 @@ void AutomationTest () {
 int TestMarkSymbols (int input[], char expOut[][5]) {
    char arr[10][5] = { { '1','2','3','\n' },{ '4','5','6','\n' },{ '7','8','9','\n' } };
    char sym[3] = { '+','*' };
-   int j = 0, i = 0, counts=0;
+   int j = 0, i = 0, counts = 0;
    while (i < 9) {
       printf ("player%d:%d\n", j + 1, input[i]);
-      MarkSymbols (input[i], arr, sym, j,&counts);
+      MarkSymbols (input[i], arr, sym, j, &counts);
       j++;
       i++;
       if (j > 1) j = 0;
@@ -221,7 +239,7 @@ void TestIsValidInput () {
 }
 
 void DisplayWinner (int out) {
-   if (out == 0) printf ("player1 is win\n");
-   else if (out == 1) printf ("player2 is win\n");
+   if (!out) printf ("player1 is win\n");
+   else if (out) printf ("player2 is win\n");
    else printf ("match draw\n");
 }
