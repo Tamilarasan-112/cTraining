@@ -23,7 +23,7 @@ typedef struct point points;
 void Board (char arr[][5]);
 void Input (int* player);
 bool IsValidInput (char* playerInput);
-void MarkSymbols (int player, char arr[][5], char* sym, int index);
+void MarkSymbols (int player, char arr[][5], char* sym, int index,int* counts);
 void ManualTest ();
 void AutomationTest ();
 int TestMarkSymbols (int input[], char expOut[][5]);
@@ -32,17 +32,26 @@ void DisplayWinner (int out);
 void TestIsValidInput ();
 
 int main () {
-   ManualTest ();
-   //AutomationTest ();
+  //ManualTest ();
+   AutomationTest ();
 }
 
-void MarkSymbols (int player, char arr[][5], char* sym, int index) {
+void MarkSymbols (int player, char arr[][5], char* sym, int index,int* counts) {
    if (player <= 3) {
-      if (isdigit (arr[0][player - 1])) arr[0][player - 1] = sym[index];
+      if (isdigit (arr[0][player - 1])) {
+         arr[0][player - 1] = sym[index];
+         (*counts)++;
+      }
    } else if (player <= 6) {
-      if (isdigit (arr[1][player - 4])) arr[1][player - 4] = sym[index];
+      if (isdigit (arr[1][player - 4])) {
+         arr[1][player - 4] = sym[index];
+         (*counts)++;
+      }
    } else {
-      if (isdigit (arr[2][player - 7])) arr[2][player - 7] = sym[index];
+      if (isdigit (arr[2][player - 7])) {
+         arr[2][player - 7] = sym[index];
+         (*counts)++;
+      }
    }
 }
 
@@ -52,9 +61,11 @@ int Check (char arr[][5], char* sym) {
    diagonal1.player2 = 0;
    diagonal2.player1 = 0;
    diagonal2.player2 = 0;
-   column[0].player1 = 0;
-   column[1].player2 = 0;
-   column[2].player1 = 0;
+   //for intiallization
+   for (int i = 0; i < 3; i++) {
+      column[i].player1 = 0;
+      column[i].player2 = 0;
+   }
    for (int i = 0, k = 2; i < 3; i++, k--) {
       row[i].player1 = 0;
       row[i].player2 = 0;
@@ -63,12 +74,12 @@ int Check (char arr[][5], char* sym) {
             row[i].player1++;
             column[j].player1++;
             if (i == j) diagonal1.player1++;
-            else if (j == k) diagonal2.player1++;
+            if (j == k) diagonal2.player1++;
          } else if (arr[i][j] == sym[1]) {
             row[i].player2++;
             column[j].player2++;
             if (i == j) diagonal1.player2++;
-            else if (j == k) diagonal2.player2++;
+            if (j == k) diagonal2.player2++;
          }
          if (row[i].player1 == 3 || column[j].player1 == 3 || diagonal1.player1 == 3 || diagonal2.player1 == 3) {
             return 0;
@@ -76,8 +87,6 @@ int Check (char arr[][5], char* sym) {
             return 1;
          }
       }
-      row[i].player1 = 0;
-      row[i].player2 = 0;
    }
    return -1;
 }
@@ -106,7 +115,7 @@ bool IsValidInput (char* playerInput) {
 
 void StartGame () {
    char arr[10][5] = { { '1','2','3','\n' },{ '4','5','6','\n' },{ '7','8','9','\n' } };
-   int player, it = 0, ret, i = 0, j = 0;
+   int player, it = 0, ret, i = 0, j = 0, counts = 0;
    bool isWin = false;
    char sym[3] = { '+','*' };
    Board (arr);
@@ -114,7 +123,7 @@ void StartGame () {
       it++;
       printf ("Player%d:", i + 1);
       Input (&player);
-      MarkSymbols (player, arr, sym, i);
+      MarkSymbols (player, arr, sym, i,&counts);
       Board (arr);
       if (it >= 5) {
          ret = Check (arr, sym);
@@ -124,7 +133,7 @@ void StartGame () {
          } else if (ret == 1) {
             printf ("\nPlayer2 is win\n");
             isWin = true;
-         } else if (it == 9) {
+         } else if (counts==9) {
             printf ("\nDraw");
             isWin = true;
          }
@@ -162,10 +171,10 @@ void AutomationTest () {
 int TestMarkSymbols (int input[], char expOut[][5]) {
    char arr[10][5] = { { '1','2','3','\n' },{ '4','5','6','\n' },{ '7','8','9','\n' } };
    char sym[3] = { '+','*' };
-   int j = 0, i = 0;
+   int j = 0, i = 0, counts=0;
    while (i < 9) {
       printf ("player%d:%d\n", j + 1, input[i]);
-      MarkSymbols (input[i], arr, sym, j);
+      MarkSymbols (input[i], arr, sym, j,&counts);
       j++;
       i++;
       if (j > 1) j = 0;
