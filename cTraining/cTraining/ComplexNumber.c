@@ -8,7 +8,6 @@
 
 #include <stdio.h>
 #include <math.h>
-#include <malloc.h>
 #include <stdbool.h>
 #include <string.h>
 
@@ -26,25 +25,25 @@ void AutomationTest ();
 void ManualTest ();
 
 /// <summary>Add two complex numbers and return the result.</summary>
-Complexop* Add (Complexop* op1, Complexop* op2);
+Complexop Add (Complexop op1, Complexop op2);
 
 /// <summary>Subtract two complex numbers and return the result.</summary>
-Complexop* Sub (Complexop* op1, Complexop* op2);
+Complexop Sub (Complexop op1, Complexop op2);
 
 /// <summary>Perform the multiplication of two complex numbers and return the result.</summary>
-Complexop* Multi (Complexop* op1, Complexop* op2);
+Complexop Multi (Complexop op1, Complexop op2);
 
 /// <summary>Compute the modulus of a complex number and return the result.</summary>
-float Mod (Complexop* op);
+float Mod (Complexop op);
 
 /// <summary>Compute the conjugate of the complex number and return the result.</summary>
-Complexop* Conjugate (Complexop* op);
+Complexop Conjugate (Complexop op);
 
 /// <summary>Clear the buffered input data.</summary>
 void ClearInputBuffer ();
 
 /// <summary>Get the complex number from the user and return the operand.</summary>
-Complexop* GetInput ();
+int GetInput (Complexop* op);
 
 /// <summary>Return true if the choice is correct, else false.</summary>
 bool isValidChoice (char* choice);
@@ -54,93 +53,64 @@ int main () {
    ManualTest ();
 }
 
-Complexop* Add (Complexop* op1, Complexop* op2) {
-   Complexop* result = malloc (sizeof (Complexop));
-   if (result != NULL) {
-      result->real = op1->real + op2->real;
-      result->imagin = op1->imagin + op2->imagin;
-      return result;
-   } else {
-      printf ("Memory allocation failed!");
-      return result;
-   }
+Complexop Add (Complexop op1, Complexop op2) {
+   Complexop result;
+   result.real = op1.real + op2.real;
+   result.imagin = op1.imagin + op2.imagin;
+   return result;
 }
 
-Complexop* Sub (Complexop* op1, Complexop* op2) {
-   Complexop* result = malloc (sizeof (Complexop));
-   if (result != NULL) {
-      result->real = op1->real - op2->real;
-      result->imagin = op1->imagin - op2->imagin;
-      return result;
-   } else {
-      printf ("Memory allocation failed!");
-      return result;
-   }
+Complexop Sub (Complexop op1, Complexop op2) {
+   Complexop result;
+   result.real = op1.real - op2.real;
+   result.imagin = op1.imagin - op2.imagin;
+   return result;
 }
 
-Complexop* Multi (Complexop* op1, Complexop* op2) {
-   Complexop* result = malloc (sizeof (Complexop));
-   if (result != NULL) {
-      result->real = op1->real * op2->real - op1->imagin * op2->imagin;
-      result->imagin = op1->real * op2->imagin + op1->imagin * op2->real;
-      return result;
-   } else {
-      printf ("Memory allocation failed!");
-      return result;
-   }
+Complexop Multi (Complexop op1, Complexop op2) {
+   Complexop result;
+   result.real = op1.real * op2.real - op1.imagin * op2.imagin;
+   result.imagin = op1.real * op2.imagin + op1.imagin * op2.real;
+   return result;
 }
 
-float Mod (Complexop* op) {
-   float real = (float)pow (op->real * op->real + op->imagin * op->imagin, 0.5);
+float Mod (Complexop op) {
+   float real = (float)pow (op.real * op.real + op.imagin * op.imagin, 0.5);
    return real;
 }
 
-Complexop* Conjugate (Complexop* op) {
-   Complexop* result = malloc (sizeof (Complexop));
-   if (result != NULL) {
-      result->real = op->real;
-      result->imagin = -(op->imagin);
-      return result;
-   } else {
-      printf ("Memory allocation failed!");
-      return result;
-   }
+Complexop Conjugate (Complexop op) {
+   Complexop result;
+   result.real = op.real;
+   result.imagin = -(op.imagin);
+   return result;
 }
 
 void ClearInputBuffer () {
    while (getchar () != '\n');
 }
 
-Complexop* GetInput () {
-   Complexop* op = malloc (sizeof (Complexop));
-   bool isValid;
+int GetInput (Complexop* op) {
+   bool isValid = true;
    char c, c1;
-   if (op != NULL) {
-      do {
-         isValid = true;
-         printf ("Enter real number: ");
-         if (!scanf_s ("%f%c", &op->real, &c1, 1)) {
-            ClearInputBuffer ();
-            isValid = false;
-         } else if (c1 != '\n') {
-            ClearInputBuffer ();
-            isValid = false;
-         }
-         printf ("Enter imaginary number: ");
-         if (!scanf_s ("%f%c", &op->imagin, &c, 1)) {
-            ClearInputBuffer ();
-            isValid = false;
-         } else if (c != '\n') {
-            ClearInputBuffer ();
-            isValid = false;
-         }
-         if (!(isValid)) printf ("Invalid complex number!\n");
-      } while (!(isValid));
-      return op;
-   } else {
-      printf ("Memory allocation failed!");
-      return op;
+   printf ("Enter real number: ");
+   if (!scanf_s ("%f%c", &op->real, &c1, 1)) {
+      ClearInputBuffer ();
+      isValid = false;
+   } else if (c1 != '\n') {
+      ClearInputBuffer ();
+      isValid = false;
    }
+   printf ("Enter imaginary number: ");
+   if (!scanf_s ("%f%c", &op->imagin, &c, 1)) {
+      ClearInputBuffer ();
+      isValid = false;
+   } else if (c != '\n') {
+      ClearInputBuffer ();
+      isValid = false;
+   }
+   if (!(isValid)) return 0;
+   return 1;
 }
 
 bool isValidChoice (char* choice) {
@@ -156,24 +126,33 @@ void ManualTest () {
          if (choice[0] == '0') {
             break;
          } else {
-            Complexop* op1 = NULL;
-            Complexop* op2 = NULL;
-            Complexop* result=NULL;
+            Complexop op1;
+            Complexop op2;
+            Complexop result;
+            int ret;
 
-            printf ("Complex number 1:\n");
-            op1 = GetInput ();
-            printf ("Complex number 2:\n");
-            op2 = GetInput ();
+            do {
+               printf ("Complex number 1:\n");
+               ret = GetInput (&op1);
+               if (!ret) printf ("Invalid complex number!\n");
+               else break;
+            } while (true);
+            do {
+               printf ("Complex number 2:\n");
+               ret = GetInput (&op2);
+               if (!ret) printf ("Invalid complex number!\n");
+               else break;
+            } while (true);
 
             result = Add (op1, op2);
-            if (isinf (result->real) || isinf (result->imagin))printf ("The result exceeds float range!\n");
-            else printf ("Addition       :%f %fi\n", result->real, result->imagin);
+            if (isinf (result.real) || isinf (result.imagin))printf ("The result exceeds float range!\n");
+            else printf ("Addition       :%f %fi\n", result.real, result.imagin);
             result = Sub (op1, op2);
-            if (isinf (result->real) || isinf (result->imagin))printf ("The result exceeds float range!\n");
-            else printf ("Subtraction   :%f %f\n", result->real, result->imagin);
+            if (isinf (result.real) || isinf (result.imagin))printf ("The result exceeds float range!\n");
+            else printf ("Subtraction   :%f %f\n", result.real, result.imagin);
             result = Multi (op1, op2);
-            if (isinf (result->real) || isinf (result->imagin))printf ("The result exceeds float range!\n");
-            else printf ("Multiplication:%f %f\n", result->real, result->imagin);
+            if (isinf (result.real) || isinf (result.imagin))printf ("The result exceeds float range!\n");
+            else printf ("Multiplication:%f %f\n", result.real, result.imagin);
             float output = Mod (op1);
             if (isinf (output))printf ("The result exceeds float range!.\n");
             else printf ("Modulus1       :%f\n", output);
@@ -181,11 +160,11 @@ void ManualTest () {
             if (isinf (output))printf ("The result exceeds float range!.\n");
             else printf ("Modulus2       :%f\n", output);
             result = Conjugate (op1);
-            if (isinf (result->real) || isinf (result->imagin))printf ("The result exceeds float range!\n");
-            else printf ("Conjugate1     :%f %fi\n", result->real, result->imagin);
+            if (isinf (result.real) || isinf (result.imagin))printf ("The result exceeds float range!\n");
+            else printf ("Conjugate1     :%f %fi\n", result.real, result.imagin);
             result = Conjugate (op2);
-            if (isinf (result->real) || isinf (result->imagin))printf ("The result exceeds float range!\n");
-            else printf ("Conjugate2     :%f %fi\n", result->real, result->imagin);
+            if (isinf (result.real) || isinf (result.imagin))printf ("The result exceeds float range!\n");
+            else printf ("Conjugate2     :%f %fi\n", result.real, result.imagin);
          }
       } else {
          printf ("Invalid choice!\n");
@@ -205,69 +184,67 @@ void AutomationTest () {
    float expRealMulti[] = { 175916.13f,1595528.51f,149047.11f,1.0f,0.0f }, expImaginMulti[] = { 57327.93f,-967871.05f,139643.92f,1.0f,0.0f };
    float expImaginMod1[] = { 345.94f,3438.32f,46.92f,1.0f,0.0f }, expImaginMod2[] = { 534.84f,542.75f,4353.12f,1.0f,0.0f };
 
-   Complexop* op1 = malloc (sizeof (Complexop));
-   Complexop* op2 = malloc (sizeof (Complexop));
-   Complexop* result = malloc (sizeof (Complexop));
+   Complexop op1;
+   Complexop op2;
+   Complexop result;
 
    for (int i = 0; i < 5; i++) {
       printf ("\nCase%d:\n", i + 1);
-      if (result != NULL) {
-         op1->real = op1Real[i];
-         op1->imagin = op1Imagin[i];
-         printf ("Complex number1:\nInput real number:%f\nInput imaginary number:%f\n", op1Real[i], op1Imagin[i]);
-         op2->real = op2Real[i];
-         op2->imagin = op2Imagin[i];
-         printf ("Complex number2:\nInput real number:%f\nInput imaginary number:%f\n", op2Real[i], op2Imagin[i]);
+      op1.real = op1Real[i];
+      op1.imagin = op1Imagin[i];
+      printf ("Complex number1:\nInput real number:%f\nInput imaginary number:%f\n", op1Real[i], op1Imagin[i]);
+      op2.real = op2Real[i];
+      op2.imagin = op2Imagin[i];
+      printf ("Complex number2:\nInput real number:%f\nInput imaginary number:%f\n", op2Real[i], op2Imagin[i]);
 
-         result=Add (op1, op2);
-         int ret1 = isinf (result->real) || isinf (result->imagin);
-         if (ret1) {
-            if (ret1 == expRealAdd[i] && ret1 == expImaginAdd[i]) printf ("Addition Passed!\n");
-            else printf ("Addition Failed!\n");
-         } else {
-            if (round (result->real) == round (expRealAdd[i]) && round (result->imagin) == round (expImaginAdd[i])) printf ("Addition Passed!\n");
-            else printf ("Addition Failed!\n");
-         }
+      result = Add (op1, op2);
+      int ret1 = isinf (result.real) || isinf (result.imagin);
+      if (ret1) {
+         if (ret1 == expRealAdd[i] && ret1 == expImaginAdd[i]) printf ("Addition Passed!\n");
+         else printf ("Addition Failed!\n");
+      } else {
+         if (round (result.real) == round (expRealAdd[i]) && round (result.imagin) == round (expImaginAdd[i])) printf ("Addition Passed!\n");
+         else printf ("Addition Failed!\n");
+      }
 
-         result=Sub (op1, op2);
-         int ret2 = isinf (result->real) || isinf (result->imagin);
-         if (ret2) {
-            if (ret2 == expRealSub[i] && ret2 == expImaginSub[i]) printf ("Subtraction Passed!\n");
-            else printf ("Subtraction Failed!\n");
-         } else {
-            if (round (result->real) == round (expRealSub[i]) && round (result->imagin) == round (expImaginSub[i])) printf ("Subtraction Passed!\n");
-            else printf ("Subtraction Failed!\n");
-         }
+      result = Sub (op1, op2);
+      int ret2 = isinf (result.real) || isinf (result.imagin);
+      if (ret2) {
+         if (ret2 == expRealSub[i] && ret2 == expImaginSub[i]) printf ("Subtraction Passed!\n");
+         else printf ("Subtraction Failed!\n");
+      } else {
+         if (round (result.real) == round (expRealSub[i]) && round (result.imagin) == round (expImaginSub[i])) printf ("Subtraction Passed!\n");
+         else printf ("Subtraction Failed!\n");
+      }
 
-         result=Multi (op1, op2);
-         int ret3 = isinf (result->real) || isinf (result->imagin);
-         if (ret3) {
-            if (ret3 == expRealMulti[i] && ret3 == expImaginMulti[i]) printf ("Multiplication Passed!\n");
-            else printf ("Multiplication Failed!\n");
-         } else {
-            if (round (result->real) == round (expRealMulti[i]) && round (result->imagin) == round (expImaginMulti[i])) printf ("Multiplication Passed!\n");
-            else printf ("Multiplication Failed!\n");
-         }
+      result = Multi (op1, op2);
+      int ret3 = isinf (result.real) || isinf (result.imagin);
+      if (ret3) {
+         if (ret3 == expRealMulti[i] && ret3 == expImaginMulti[i]) printf ("Multiplication Passed!\n");
+         else printf ("Multiplication Failed!\n");
+      } else {
+         if (round (result.real) == round (expRealMulti[i]) && round (result.imagin) == round (expImaginMulti[i])) printf ("Multiplication Passed!\n");
+         else printf ("Multiplication Failed!\n");
+      }
 
-         float output=Mod (op1);
-         int ret4 = isinf (output);
-         if (ret4) {
-            if (ret4 == expImaginMod1[i]) printf ("Modulus Passed!\n");
-            else printf ("Modulus Failed!\n");
-         } else {
-            if (round (output) == round (expImaginMod1[i])) printf ("Modulus Passed!\n");
-            else printf ("Modulus Failed!\n");
-         }
+      float output = Mod (op1);
+      int ret4 = isinf (output);
+      if (ret4) {
+         if (ret4 == expImaginMod1[i]) printf ("Modulus Passed!\n");
+         else printf ("Modulus Failed!\n");
+      } else {
+         if (round (output) == round (expImaginMod1[i])) printf ("Modulus Passed!\n");
+         else printf ("Modulus Failed!\n");
+      }
 
-         float output1 = Mod (op2);
-         int ret5 = isinf (output1);
-         if (ret5) {
-            if (ret5 == expImaginMod2[i]) printf ("Modulus Passed!\n");
-            else printf ("Modulus Failed!\n");
-         } else {
-            if (round (output1) == round (expImaginMod2[i])) printf ("Modulus Passed!\n");
-            else printf ("Modulus Failed!\n");
-         }
-      } else printf ("Memory allocation failed!");
+      float output1 = Mod (op2);
+      int ret5 = isinf (output1);
+      if (ret5) {
+         if (ret5 == expImaginMod2[i]) printf ("Modulus Passed!\n");
+         else printf ("Modulus Failed!\n");
+      } else {
+         if (round (output1) == round (expImaginMod2[i])) printf ("Modulus Passed!\n");
+         else printf ("Modulus Failed!\n");
+      }
    }
 }
