@@ -64,6 +64,9 @@ void Display (int* array, int arrSize);
 /// <summary>To build a maximum heap.</summary>
 void BuildMaxHeap (int index, int arrSize, int arr[]);
 
+/// <summary>Swap the two number in array.</summary>
+void Swap (int index, int newIndex, int arr[]);
+
 int main () {
    UnitTest ();
 }
@@ -194,9 +197,7 @@ void HeapSort (int arr[], int arrSize) {
       BuildMaxHeap (parentIndex, arrSize, arr);
    for (int i = arrSize - 1; i > 0; i--) {
       // Replace the last element with the first element and delete the first element.
-      int root = arr[0];
-      arr[0] = arr[i];
-      arr[i] = root;
+      swap (0, i, arr);
       BuildMaxHeap (0, i, arr);
    }
 }
@@ -204,23 +205,27 @@ void HeapSort (int arr[], int arrSize) {
 void BuildMaxHeap (int index, int arrSize, int arr[]) {
    int largest = index, left = 2 * index + 1, right = 2 * index + 2;
    if (left < arrSize && arr[largest] < arr[left]) largest = left;
-   if (right < arrSize && arr[largest] < arr[right])largest = right;
+   if (right < arrSize && arr[largest] < arr[right]) largest = right;
    if (largest != index) {
-      int temp = arr[index];
-      arr[index] = arr[largest];
-      arr[largest] = temp;
+      swap (index, largest, arr);
       BuildMaxHeap (largest, arrSize, arr);
    }
 }
 
+void Swap (int index, int newIndex, int arr[]) {
+   int temp = arr[index];
+   arr[index] = arr[newIndex];
+   arr[newIndex] = temp;
+}
+
 int BinarySearch (int target, int array[], int arrSize) {
    int low = 0, high = arrSize - 1, index = -1, mid;
-   do {
+   while (low <= high) {
       mid = (low + high) / 2;
-      if (array[mid] < target)low = mid + 1;
+      if (array[mid] < target) low = mid + 1;
       else high = mid - 1;
       if (array[mid] == target) index = mid;
-   } while (low <= high);
+   }
    return index;
 }
 
@@ -268,27 +273,23 @@ void UnitTest () {
 }
 
 void TestInputMethod () {
-   printf ("\nTest GetArray method:\n");
    int* arr;
-   printf ("Please enter the integers separated by a single space.");
+   printf ("\nTest GetArray method : \nPlease enter the integers separated by a single space.");
    int arrSize, ret = GetArray (&arr, &arrSize), target, ret1;
-   if (ret == 1 || ret == 0) printf (COLOR_GREEN"\nPassed\n"COLOR_RESET);
-   else printf (COLOR_YELLOW"\nFailed\n"COLOR_RESET);
+   ret || !ret ? printf (COLOR_GREEN"\nPassed\n"COLOR_RESET) : printf (COLOR_YELLOW"\nFailed\n"COLOR_RESET);
    printf ("\nTest GetTarget method:\n");
    ret1 = GetTarget (&target);
-   if (ret1 == 1 || ret1 == 0) printf (COLOR_GREEN"\nPassed\n"COLOR_RESET);
-   else printf (COLOR_YELLOW"\nFailed\n"COLOR_RESET);
+   ret1 || !ret1 ? printf (COLOR_GREEN"\nPassed\n"COLOR_RESET) : printf (COLOR_YELLOW"\nFailed\n"COLOR_RESET);
 }
 
 void TestValidateMethod () {
    printf ("\nIsValidInt method\n");
    char ipArrays[][50] = { " \n","-2147483647\n","2147483647\n","213223123123213\n","-1\n","000000000000000000000000\n","\n","-00000000000000000002147483647\n","-\n","-","ASD@11\n","1\n","23423\n" ,"-1221\n" };
-   int expOp[] = { 0,1,1,0,1,1,0,1,0,0,0,1,1,1}, ret = 0;
+   int expOp[] = { 0,1,1,0,1,1,0,1,0,0,0,1,1,1 }, ret = 0;
    for (int i = 0; i < 14; i++) {
       ret = IsValidInt (ipArrays[i]);
       printf ("\ninput :%s->Return %d", ipArrays[i], ret);
-      if (ret == expOp[i]) printf (COLOR_GREEN"\nPassed\n"COLOR_RESET);
-      else printf (COLOR_YELLOW"\nFailed\n"COLOR_RESET);
+      ret == expOp[i] ? printf (COLOR_GREEN"\nPassed\n"COLOR_RESET) : printf (COLOR_YELLOW"\nFailed\n"COLOR_RESET);
    }
 }
 
@@ -301,16 +302,14 @@ void TestSortMethod () {
    for (int i = 0; i < 8; i++) {
       bool isEqual = true;
       printf ("\ninput :");
-      for (int j = 0; j < ipArraySizes[i]; j++)printf ("%d ", ipArrays[i][j]);
+      for (int j = 0; j < ipArraySizes[i]; j++) printf ("%d ", ipArrays[i][j]);
       HeapSort (ipArrays[i], ipArraySizes[i]);
       printf ("\noutput:");
       for (int j = 0; j < ipArraySizes[i]; j++) {
          printf ("%d ", ipArrays[i][j]);
          if (ipArrays[i][j] != expOp[i][j]) isEqual = false;
       }
-      if (isEqual) printf (COLOR_GREEN"\nPassed\n"COLOR_RESET);
-      else printf (COLOR_YELLOW"\nFailed\n"COLOR_RESET);
-      printf ("\n");
+      isEqual ? printf (COLOR_GREEN"\nPassed\n"COLOR_RESET) : printf (COLOR_YELLOW"\nFailed\n"COLOR_RESET);
    }
 }
 
@@ -326,59 +325,56 @@ void TestSearchMethod () {
       Display (ipArrays[i], ipArraySizes[i]);
       ret = BinarySearch (targets[i], ipArrays[i], ipArraySizes[i]);
       printf ("\nTarget:%d->Index:%d\n", targets[i], ret);
-      if (ret == expOut[i]) printf (COLOR_GREEN"Passed\n"COLOR_RESET);
-      else printf (COLOR_YELLOW"Failed\n"COLOR_RESET);
+      ret == expOut[i] ? printf (COLOR_GREEN"Passed\n"COLOR_RESET) : printf (COLOR_YELLOW"Failed\n"COLOR_RESET);
    }
 }
 
 void ManualTest () {
-   bool isExit1 = false;
+   bool isExit = false;
    char choice[3];
    int* array = NULL;
    int arrSize = 0, target;
    do {
-      bool isExit2 = false;
       printf ("\n___________________\nManual test:\nSort    -> Enter 1\n");
       printf ("Search  -> Enter 2\nBack    -> Enter 3\n___________________\nChoice:");
       fgets (choice, 3, stdin);
       if (IsValidChoiceMenu (choice)) {
-         bool isExit3 = false, isExit5 = false, isExit6 = false;
          switch (choice[0]) {
          case '1':
             do {
                printf ("\nHeap Sort\nPlease enter the integers separated by a single space.");
-               if (GetArray (&array, &arrSize) == 1) {
+               if (GetArray (&array, &arrSize)) {
                   HeapSort (array, arrSize);
                   printf ("output:");
                   Display (array, arrSize);
-                  isExit3 = true;
+                  break;
                }
-            } while (!isExit3);
+            } while (true);
             break;
          case '2':
             do {
                printf ("Please enter the integers separated by a single space.");
-               if (GetArray (&array, &arrSize) == 1) {
+               if (GetArray (&array, &arrSize)) {
                   do {
-                     if (GetTarget (&target) == 1) {
+                     if (GetTarget (&target)) {
                         HeapSort (array, arrSize);
                         printf ("Sorted array:");
                         Display (array, arrSize);
                         printf ("\nindex:%d", BinarySearch (target, array, arrSize));
-                        isExit6 = true;
+                        break;
                      }
-                  } while (!isExit6);
-                  isExit5 = true;
+                  } while (true);
+                  break;
                }
-            } while (!isExit5);
+            } while (true);
             break;
-         case '3':isExit1 = true;
+         case '3':isExit = true;
          }
       } else {
          printf (COLOR_RED"\nInvalid choice!\n"COLOR_RESET);
          if (choice[strlen (choice) - 1] != '\n') ClearBufferInput ();
       }
-   } while (!isExit1);
+   } while (!isExit);
 }
 
 void Display (int* array, int arrSize) {
