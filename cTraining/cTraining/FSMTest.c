@@ -5,21 +5,10 @@
 #include <stdbool.h>
 #include <string.h>
 
-/// <summary>
-/// This function will execute the FSM providing the input and output file names as arguments
-/// </summary>
-/// <param name="exeFilePathAndName"></param>
-/// <param name="inputFilePathAndName"></param>
-/// <param name="outputFilePathAndName"></param>
-/// <returns></returns>
+/// <summary>This function will execute the FSM providing the input and output file names as arguments</summary>
 int ExecProgram (char* exeFilePathAndName, char* inputFilePathAndName, char* outputFilePathAndName);
 
-/// <summary>
-/// Test Harness
-/// </summary>
-/// <param name="argc"></param>
-/// <param name="argv">argv[1] is the name of the FSM</param>
-/// <returns></returns>
+/// <summary>Test Harness</summary>
 int main (int argc, char** argv) {
 #define NTESTS 10
    printf ("FSM Test Harness\n");
@@ -27,22 +16,22 @@ int main (int argc, char** argv) {
       printf ("Usage: %s <%s>\n,", argv[0], argv[1]);
       return -1;
    }
-   char inputFile[20], ExpOutputFile[28];
+   char inputFile[20], expOutputFile[28];
    for (int i = 1; i <= NTESTS; i++) {
       sprintf (inputFile, "Inputfiles/ip%d.txt", i);
-      sprintf (ExpOutputFile, "Referencefiles/Exp-op%d.txt", i);
-      char ec, oc;
-      int bitNo = 0;
-      bool isError = false;
+      sprintf (expOutputFile, "Referencefiles/Exp-op%d.txt", i);
       if (ExecProgram (argv[1], inputFile, "outputFile.txt") != 0)printf ("Error executing test %d\n", i);
       else {
-         FILE* exOpFile = fopen (ExpOutputFile, "r"), * outFile = fopen ("outputFile.txt", "r");
+         char expChar, outChar;
+         int bitNo = 0;
+         bool isError = false;
+         FILE* exOpFile = fopen (expOutputFile, "r"), * outFile = fopen ("outputFile.txt", "r");
          if (exOpFile && outFile) {
-            while (fread (&oc, sizeof (char), 1, outFile) && fread (&ec, sizeof (char), 1, exOpFile)) {
+            while (fread (&outChar, sizeof (char), 1, outFile) && fread (&expChar, sizeof (char), 1, exOpFile)) {
                bitNo++;
-               if (oc == ec) continue;
+               if (outChar == expChar) continue;
                else {
-                  printf ("Error Testing <%s> ,Error at bit no: <%d>, Expected: <%c>,Actual: <%c>\n", inputFile, bitNo, ec, oc);
+                  printf ("Error Testing <%s> ,Error at bit no: <%d>, Expected: <%c>,Actual: <%c>\n", inputFile, bitNo, expChar, outChar);
                   isError = true;
                }
             }
