@@ -17,13 +17,13 @@
 bool isValidAmount (char* Amount);
 
 /// <summary>Returns 1 if coins are counted and stored in the array; otherwise, 0.</summary>
-int CalcCoins (int paid, int actualAmount, int* noCoins);
+int CalcCoins (int paid, int actualAmount, int noCoins[], int coins[]);
 
 /// <summary>To manually test the CalcCoins method.</summary>
 void ManualTest ();
 
 /// <summary>Gets the amount from the user.</summary>
-int GetAmount (int* paid, int* actualAmount);
+void GetAmount (int* paid, int* actualAmount);
 
 /// <summary>To automatically test the CalcCoins method.</summary>
 void AutomationTest ();
@@ -33,7 +33,7 @@ int main () {
    //AutomationTest ();
 }
 
-int GetAmount (int* paid, int* actualAmount) {
+void GetAmount (int* paid, int* actualAmount) {
    char* paidStr = malloc (15 * sizeof (char)), * actualAmountStr = malloc (15 * sizeof (char));
    do {
       printf ("You enter the payment 1 to 2,147,483,647 \nPaid Amount : ");
@@ -49,7 +49,7 @@ bool isValidAmount (char* Amount) {
    if (Amount[0] == '-') return false;
    char* end;
    long long int num = strtoll (Amount, &end, 10);
-   int strLen = strlen (Amount);
+   int strLen = (int)strlen (Amount);
    if (Amount[strLen - 1] != '\n' || !(num > 0 && num <= 2147483647)) return false;
    for (int i = 0; i < strLen - 1; i++) {
       if (!isdigit (Amount[i])) return false;
@@ -57,27 +57,15 @@ bool isValidAmount (char* Amount) {
    return true;
 }
 
-int CalcCoins (int paid, int actualAmount, int* coins) {
-   int change = paid - actualAmount;
-   if (change <= 0) {
-      printf ("No need to give changes\n");
-      return 0;
-   }
-   if (change >= 10) {
-      coins[0] = change / 10;
-      change %= 10;
-   }
-   if (change >= 5) {
-      coins[1] = change / 5;
-      change %= 5;
-   }
-   if (change >= 2) {
-      coins[2] = change / 2;
-      change %= 2;
-   }
-   if (change >= 1) {
-      coins[3] = change / 1;
-      change %= 1;
+int CalcCoins (int paid, int actualAmount, int noCoins[], int coins[]) {
+   int change = paid - actualAmount, i = 0;
+   if (change <= 0) return 0;
+   while (change > 0) {
+      if (change >= coins[i]) {
+         noCoins[i] = change / coins[i];
+         change %= coins[i];
+      }
+      i++;
    }
    return 1;
 }
@@ -85,7 +73,7 @@ int CalcCoins (int paid, int actualAmount, int* coins) {
 void ManualTest () {
    int paid = 0, actualAmount = 0, coins[] = { 10,5,2,1 }, noCoins[] = { 0,0,0,0 };
    GetAmount (&paid, &actualAmount);
-   CalcCoins (paid, actualAmount, noCoins);
+   if (!CalcCoins (paid, actualAmount, noCoins, coins)) printf ("No need to give changes\n");
    for (int i = 0; i < 4; i++) {
       printf ("Rs.%d Coins ->%d\n", coins[i], noCoins[i]);
    }
@@ -99,7 +87,7 @@ void AutomationTest () {
    for (int i = 0; i < 5; i++) {
       int noCoins[] = { 0,0,0,0 };
       printf ("Case%d:input:\npaid:%d\nActual amount:%d\n", i + 1, paid[i], actualAmount[i]);
-      CalcCoins (paid[i], actualAmount[i], noCoins);
+      if (!CalcCoins (paid[i], actualAmount[i], noCoins, coins)) printf ("No need to give changes\n");
       printf ("\nExpected output:\n");
       for (int j = 0; j < 4; j++) {
          printf ("Rs.%d->%d\n", coins[j], expNoCoins[i][j]);
@@ -107,7 +95,7 @@ void AutomationTest () {
       }
       printf ("\nActual output:\n");
       for (int j = 0; j < 4; j++) printf ("Rs.%d->%d\n", coins[j], noCoins[j]);
-      if (isPassed) printf ("\Passed!\n");
+      if (isPassed) printf ("Passed!\n");
       else printf ("Failed!");
    }
 }
