@@ -13,7 +13,6 @@
 #include <stdbool.h>
 #include <string.h>
 
-
 #pragma warning (disable : 4996)
 
 #define GREEN_COLOR   "\x1b[32m"
@@ -72,8 +71,7 @@ void DrawSoldiers (FILE* actualOut) {
 }
 
 void DrawGrit (FILE* actualOut) {
-   wchar_t gridPieces[] = L"┣━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━┫\n";
-   wchar_t box[71];
+   wchar_t gridPieces[] = L"┣━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━┫\n", box[71];
    wcscpy (box, gridPieces);
    wcscat (box, L"┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃\n");
    Print (L"\n", actualOut);
