@@ -36,6 +36,8 @@ int main (int argc, char** argv) {
                }
             }
             if (!isError)printf ("No error testing <%s>\n", inputFile);
+            fclose (exOpFile);
+            fclose (outFile);
          }
       }
    }
