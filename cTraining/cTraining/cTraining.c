@@ -96,5 +96,7 @@ void Test () {
       while ((fread (&expChar, sizeof (wchar_t), 1, expOut) && fread (&outChar, sizeof (wchar_t), 1, actOut)) == 1)
          if (expChar != outChar) isEqual = false;
       isEqual ? wprintf (L"Passed\n") : wprintf (L"Failed\n");
+      fclose (actOut);
+      fclose (expOut);
    }
 }
