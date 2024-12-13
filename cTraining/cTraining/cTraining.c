@@ -11,6 +11,8 @@
 #include <fcntl.h>
 #include <io.h>
 #include <stdbool.h>
+#include <string.h>
+
 
 #pragma warning (disable : 4996)
 
@@ -37,48 +39,47 @@ int main () {
 void DrawChess () {
    wchar_t blackPieces[6] = { L'♖',L'♘',L'♗',L'♔',L'♕' };
    wchar_t whitePieces[6] = { L'♜',L'♞',L'♝',L'♚',L'♛' };
+   wchar_t gridPieces[] = L"\n┣━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━┫\n";
    int a = _setmode (_fileno (stdout), _O_U16TEXT);
    FILE* actualOut = fopen ("ActualOut.txt", "w, ccs=UTF-8");
    Print (L"┏━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┓\n", actualOut);
    DrawPieces (blackPieces, actualOut);
-   Print (L"\n┣━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━┫\n", actualOut);
+   Print (gridPieces, actualOut);
    DrawSoldiers (actualOut);
    DrawGrit (actualOut);
    DrawSoldiers (actualOut);
-   Print (L"\n┣━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━┫\n", actualOut);
+   Print (gridPieces, actualOut);
    DrawPieces (whitePieces, actualOut);
    Print (L"\n┗━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┛", actualOut);
    fclose (actualOut);
 }
 
 void DrawPieces (wchar_t uniCode[], FILE* actualOut) {
-   int j = 2, i = 0, it = i;
+   int j = 3, i = 0;
    wchar_t string[5] = L"┃   ";
-   while (j >= -1) {
-      string[2] = uniCode[it];
+   while (j >= 0) {
+      string[2] = uniCode[i];
       Print (string, actualOut);
-      if (i < 4) it = ++i;
-      else {
-         it = j;
-         j--;
-      }
+      i = i < 4 && j == 3 ? ++i : --j;
    }
    Print (L"┃", actualOut);
 }
 
 void DrawSoldiers (FILE* actualOut) {
-   for (int i = 0; i < 8; i++) {
+   for (int i = 0; i < 8; i++)
       Print (L"┃ ♙ ", actualOut);
-   }
    Print (L"┃", actualOut);
 }
 
 void DrawGrit (FILE* actualOut) {
+   wchar_t gridPieces[] = L"┣━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━┫\n";
+   wchar_t box[71];
+   wcscpy (box, gridPieces);
+   wcscat (box, L"┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃\n");
    Print (L"\n", actualOut);
-   for (int i = 0; i < 4; i++) {
-      Print (L"┣━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━┫\n┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃\n", actualOut);
-   }
-   Print (L"┣━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━┫\n", actualOut);
+   for (int i = 0; i < 4; i++)
+      Print (box, actualOut);
+   Print (gridPieces, actualOut);
 }
 
 void Print (wchar_t string[], FILE* actualOut) {
@@ -88,14 +89,12 @@ void Print (wchar_t string[], FILE* actualOut) {
 
 void Test () {
    wprintf (L"\nTest:");
-   wchar_t ec, ac;
+   wchar_t expChar, outChar;
    bool isEqual = true;
    FILE* expOut = fopen ("ExpectedOutput.txt", "r, ccs=UTF-8"), * actOut = fopen ("ActualOut.txt", "r, ccs=UTF-8");
    if (actOut && expOut) {
-      while ((fread (&ec, sizeof (wchar_t), 1, expOut) && fread (&ac, sizeof (wchar_t), 1, actOut)) == 1) {
-         if (ec != ac) isEqual = false;
-      }
-      if (isEqual) wprintf (L"Passed\n");
-      else wprintf (L"Failed\n");
+      while ((fread (&expChar, sizeof (wchar_t), 1, expOut) && fread (&outChar, sizeof (wchar_t), 1, actOut)) == 1)
+         if (expChar != outChar) isEqual = false;
+      isEqual ? wprintf (L"Passed\n") : wprintf (L"Failed\n");
    }
 }
