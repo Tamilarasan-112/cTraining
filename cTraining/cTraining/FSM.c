@@ -82,7 +82,7 @@ void Mealy (char* inputFP, char* outputFP) {
             fprintf (opFile, "%d", output);
          }
       }
+      fclose (ipFile);
+      fclose (opFile);
    }
-   fclose (ipFile);
-   fclose (opFile);
 }
