@@ -29,8 +29,8 @@ void GetAmount (int* paid, int* actualAmount);
 void AutomationTest ();
 
 int main () {
-   ManualTest ();
-   //AutomationTest ();
+   //ManualTest ();
+   AutomationTest ();
 }
 
 void GetAmount (int* paid, int* actualAmount) {
@@ -43,6 +43,8 @@ void GetAmount (int* paid, int* actualAmount) {
    } while (!(isValidAmount (paidStr) && isValidAmount (actualAmountStr)));
    *paid = atoi (paidStr);
    *actualAmount = atoi (actualAmountStr);
+   free (paidStr);
+   free (actualAmountStr);
 }
 
 bool isValidAmount (char* Amount) {
@@ -59,43 +61,46 @@ bool isValidAmount (char* Amount) {
 
 int CalcCoins (int paid, int actualAmount, int noCoins[], int coins[]) {
    int change = paid - actualAmount, i = 0;
-   if (change <= 0) return 0;
-   while (change > 0) {
-      if (change >= coins[i]) {
-         noCoins[i] = change / coins[i];
-         change %= coins[i];
-      }
+   if (change < 0) return 0;
+   do {
+      noCoins[i] = change / coins[i];
+      change %= coins[i];
       i++;
-   }
+   } while (change > 0);
    return 1;
 }
 
 void ManualTest () {
-   int paid = 0, actualAmount = 0, coins[] = { 10,5,2,1 }, noCoins[] = { 0,0,0,0 };
+   int paid = 0, actualAmount = 0, coins[] = { 10,5,2,1 }, noCoins[] = { 0,0,0,0 }, balance;
    GetAmount (&paid, &actualAmount);
-   if (!CalcCoins (paid, actualAmount, noCoins, coins)) printf ("No need to give changes\n");
+   balance = -(paid - actualAmount);
+   if (!CalcCoins (paid, actualAmount, noCoins, coins)) printf ("Ask for the balance amount of %d \n", balance);
    for (int i = 0; i < 4; i++) {
       printf ("Rs.%d Coins ->%d\n", coins[i], noCoins[i]);
    }
 }
 
 void AutomationTest () {
-   bool isPassed = true;
-   int coins[] = { 10,5,2,1 }, paid[] = { 123,1223,213,12312,210 };
-   int actualAmount[] = { 120, 1000,205,12311,210 };
-   int expNoCoins[][4] = { {0,0,1,1 },{22,0,1,1},{0,1,1,1},{0,0,0,1},{0,0,0,0} };
+   bool isPassed;
+   int coins[] = { 10,5,2,1 }, paid[] = { 123,1223,213,12312,210 }, actualAmount[] = { 120, 1000,205,12311,210 };
+   int expNoCoins[][4] = { {0,0,1,1 },{22,0,1,1},{0,1,1,1},{0,0,0,1},{0,0,0,0} }, balance;
    for (int i = 0; i < 5; i++) {
+      isPassed = true;
       int noCoins[] = { 0,0,0,0 };
-      printf ("Case%d:input:\npaid:%d\nActual amount:%d\n", i + 1, paid[i], actualAmount[i]);
-      if (!CalcCoins (paid[i], actualAmount[i], noCoins, coins)) printf ("No need to give changes\n");
+      printf ("\nCase%d:input:\npaid:%d\nActual amount:%d\n", i + 1, paid[i], actualAmount[i]);
+      balance = -(paid[i] - actualAmount[i]);
+      if (!CalcCoins (paid[i], actualAmount[i], noCoins, coins)) printf ("Ask for the balance amount of %d \n", balance);
       printf ("\nExpected output:\n");
       for (int j = 0; j < 4; j++) {
          printf ("Rs.%d->%d\n", coins[j], expNoCoins[i][j]);
-         if (expNoCoins[i][j] != noCoins[j]) isPassed = false;
+         if (expNoCoins[i][j] != noCoins[j]) {
+            isPassed = false;
+            printf ("\nFailed!\n");
+            break;
+         }
       }
+      if (isPassed) printf ("\nPassed!\n");
       printf ("\nActual output:\n");
       for (int j = 0; j < 4; j++) printf ("Rs.%d->%d\n", coins[j], noCoins[j]);
-      if (isPassed) printf ("Passed!\n");
-      else printf ("Failed!");
    }
 }
