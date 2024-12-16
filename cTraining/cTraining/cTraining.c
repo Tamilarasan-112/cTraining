@@ -36,8 +36,8 @@ int main () {
 }
 
 void DrawChess () {
-   wchar_t blackPieces[6] = { L'♖',L'♘',L'♗',L'♔',L'♕' };
-   wchar_t whitePieces[6] = { L'♜',L'♞',L'♝',L'♚',L'♛' };
+   wchar_t blackPieces[] = { L'♖',L'♘',L'♗',L'♔',L'♕' };
+   wchar_t whitePieces[] = { L'♜',L'♞',L'♝',L'♚',L'♛' };
    wchar_t gridPieces[] = L"\n┣━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━┫\n";
    int a = _setmode (_fileno (stdout), _O_U16TEXT);
    FILE* actualOut = fopen ("ActualOut.txt", "w, ccs=UTF-8");
@@ -54,12 +54,10 @@ void DrawChess () {
 }
 
 void DrawPieces (wchar_t uniCode[], FILE* actualOut) {
-   int j = 3, i = 0;
-   wchar_t string[5] = L"┃   ";
-   while (j >= 0) {
-      string[2] = uniCode[i];
+   wchar_t string[] = L"┃   ";
+   for (int index = 0, backTrack = 3; backTrack >= 0; index = index < 4 && backTrack == 3 ? index + 1 : --backTrack) {
+      string[2] = uniCode[index];
       Print (string, actualOut);
-      i = i < 4 && j == 3 ? ++i : --j;
    }
    Print (L"┃", actualOut);
 }
@@ -93,7 +91,7 @@ void Test () {
    if (actOut && expOut) {
       while ((fread (&expChar, sizeof (wchar_t), 1, expOut) && fread (&outChar, sizeof (wchar_t), 1, actOut)) == 1)
          if (expChar != outChar) isEqual = false;
-      isEqual ? wprintf (L"Passed\n") : wprintf (L"Failed\n");
+      wprintf (isEqual ? L"Passed\n" : L"Failed\n");
       fclose (actOut);
       fclose (expOut);
    }
