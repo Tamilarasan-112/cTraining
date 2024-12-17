@@ -32,7 +32,7 @@ void StartGame ();
 void AutomationTest ();
 
 /// <summary>To test the MarkSymbols method.</summary>
-int TestMarkSymbols (int input[], char expOut[][5]);
+int TestMarkSymbols (int input[], char expOut[][4]);
 
 /// <summary>To test the Check method.</summary>
 void TestCheckWin (char markedBoard[][4], int exp);
@@ -83,13 +83,14 @@ void Input (int* player) {
 }
 
 void StartGame () {
+   printf ("\nPlayers can enter a number between 1 to 9.\nPlayer 1's symbol is 'O'\nPlayer 2's symbol is 'X'\n");
    char board[][4] = { { '1','2','3','\n' },{ '4','5','6','\n' },{ '7','8','9','\n' } };
    int player, it = 0, ret, i = 0, j = 0;
    bool isGameOver = false;
    char sym;
    InitBoard (board);
    while (!isGameOver) {
-      sym = i ? 'O' : 'X';
+      sym = i ? 'X' : 'O';
       it++;
       do {
          printf ("\nPlayer%d:", i + 1);
@@ -137,12 +138,12 @@ void AutomationTest () {
    TestCheckWin (expOut3, 0);
 }
 
-int TestMarkSymbols (int input[], char expOut[][5]) {
+int TestMarkSymbols (int input[], char expOut[][4]) {
    char board[][4] = { { '1','2','3','\n' },{ '4','5','6','\n' },{ '7','8','9','\n' } };
    char sym;
    int j = 0, i = 0;
    while (i < 9) {
-      sym = i % 2 == 0 ? 'O' : 'X';
+      sym = j ? 'X' : 'O';
       printf ("Player%d:%d\n", j + 1, input[i]);
       MarkSymbols (input[i], board, sym);
       j++;
@@ -155,7 +156,7 @@ int TestMarkSymbols (int input[], char expOut[][5]) {
    InitBoard (expOut);
    for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
-         if (!(board[i][j] == expOut[i][j])) {
+         if (board[i][j] != expOut[i][j]) {
             printf ("Failed!\n");
             return 0;
          }
@@ -171,7 +172,7 @@ void TestCheckWin (char markedBoard[][4], int exp) {
    printf ("\nInput:\n");
    InitBoard (markedBoard);
    for (int i = 0; i < 2; i++) {
-      sym = i % 2 == 0 ? 'O' : 'X';
+      sym = i ? 'X' : 'O';
       ret = CheckWin (markedBoard, sym);
       printf ("\nExpected output:\n");
       exp ? printf ("Player%d is win", i + 1) : printf ("Match draw!");
