@@ -64,25 +64,31 @@ State NextMealyState (State currentState, int input, int* output) {
       *output = input ? 1 : 0;  // Output '1' upon seeing '1101'
       return input ? S4 : T1;  // Move to T4 after recognizing '1101'
 
+   default:
+      *output = 0;
+      return input ? S1 : T1;  // Default return to initial state
    }
-   *output = 0;
-   return input ? S1 : T1;  // Default return to initial state
 }
 
 void Mealy (char* inputFP, char* outputFP) {
-   char c;
+   char inputStream[18], outputStream[18];
    State currentState = ST0;
-   int input, output = 0;
+   int input, output = 0, i = 0;
    FILE* ipFile = fopen (inputFP, "r"), * opFile = fopen (outputFP, "w");
-   if (ipFile && opFile) {
-      while (fread (&c, sizeof (char), 1, ipFile)) {
-         input = c - '0';
-         if (input == 0 || input == 1) {
-            currentState = NextMealyState (currentState, input, &output);
-            fprintf (opFile, "%d", output);
-         }
-      }
+   if (ipFile) {
+      fgets (inputStream, 18, ipFile);
       fclose (ipFile);
-      fclose (opFile);
+      if (opFile) {
+         while (i < 17) {
+            input = inputStream[i] - 48;
+            if (input == 0 || input == 1) {
+               currentState = NextMealyState (currentState, input, &output);
+               outputStream[i++] = output + 48;
+            }
+         }
+         outputStream[i] = '\0';
+         fprintf (opFile, "%s", outputStream);
+         fclose (opFile);
+      }
    }
 }

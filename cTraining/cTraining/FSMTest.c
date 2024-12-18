@@ -2,7 +2,6 @@
 #include <windows.h>
 #include <stdio.h>
 #include <malloc.h>
-#include <stdbool.h>
 #include <string.h>
 
 /// <summary>This function will execute the FSM providing the input and output file names as arguments</summary>
@@ -16,28 +15,28 @@ int main (int argc, char** argv) {
       printf ("Usage: %s <%s>\n,", argv[0], argv[1]);
       return -1;
    }
-   char inputFile[20], expOutputFile[28];
+   char inputFile[20], expOutputFile[28], expOpStream[18], actOpStream[18];
    for (int i = 1; i <= NTESTS; i++) {
       sprintf (inputFile, "Inputfiles/ip%d.txt", i);
       sprintf (expOutputFile, "Referencefiles/Exp-op%d.txt", i);
-      if (ExecProgram (argv[1], inputFile, "outputFile.txt") != 0)printf ("Error executing test %d\n", i);
+      if (ExecProgram (argv[1], inputFile, "outputFile.txt")) printf ("Error executing test % d\n", i);
       else {
-         char expChar, outChar;
          int bitNo = 0;
-         bool isError = false;
          FILE* exOpFile = fopen (expOutputFile, "r"), * outFile = fopen ("outputFile.txt", "r");
-         if (exOpFile && outFile) {
-            while (fread (&outChar, sizeof (char), 1, outFile) && fread (&expChar, sizeof (char), 1, exOpFile)) {
-               bitNo++;
-               if (outChar == expChar) continue;
+         if (exOpFile) {
+            fgets (expOpStream, 18, exOpFile);
+            fclose (exOpFile);
+            if (outFile) {
+               fgets (actOpStream, 18, outFile);
+               fclose (outFile);
+               if(strcmp(expOpStream , actOpStream)==0) printf ("No error testing <%s>\n", inputFile);
                else {
-                  printf ("Error Testing <%s> ,Error at bit no: <%d>, Expected: <%c>,Actual: <%c>\n", inputFile, bitNo, expChar, outChar);
-                  isError = true;
+                  while (bitNo < 17) {
+                     if (actOpStream[bitNo++] == expOpStream[bitNo]) continue;
+                     else printf ("Error Testing <%s> ,Error at bit no: <%d>, Expected: <%c>,Actual: <%c>\n", inputFile, bitNo, expOpStream[bitNo - 1], actOpStream[bitNo - 1]);
+                  }
                }
             }
-            if (!isError)printf ("No error testing <%s>\n", inputFile);
-            fclose (exOpFile);
-            fclose (outFile);
          }
       }
    }

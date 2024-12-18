@@ -18,65 +18,8 @@
     <ClCompile Include="FSM.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FSMTest.c">
+	<ClCompile Include="FSMTest.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="outputFile.txt" />
-    <Text Include="ip1.txt" />
-    <Text Include="ip2.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-    <Text Include="ip3.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-    <Text Include="ip4.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-    <Text Include="ip5.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-    <Text Include="Exp-op1.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-    <Text Include="Exp-op2.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-    <Text Include="Exp-op3.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-    <Text Include="Exp-op4.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-    <Text Include="Exp-op5.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-    <Text Include="ip6.txt" />
-    <Text Include="Exp-op6.txt" />
-    <Text Include="Exp-op7.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-    <Text Include="Exp-op8.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-    <Text Include="Exp-op9.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-    <Text Include="Exp-op10.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-    <Text Include="ip7.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-    <Text Include="ip8.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-    <Text Include="ip9.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-    <Text Include="ip10.txt">
-      <Filter>Source Files</Filter>
-    </Text>
   </ItemGroup>
 </Project>
