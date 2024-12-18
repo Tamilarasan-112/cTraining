@@ -58,8 +58,7 @@ int CalcCoins (int paid, int actualAmount, int coinsCount[], int coins[]) {
    if (change < 0) return 0;
    do {
       coinsCount[i] = change / coins[i];
-      change %= coins[i];
-      i++;
+      change %= coins[i++];
    } while (change > 0);
    return 1;
 }
