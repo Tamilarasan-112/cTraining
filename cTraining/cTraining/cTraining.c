@@ -85,14 +85,16 @@ void Print (wchar_t string[], FILE* actualOut) {
 
 void Test () {
    wprintf (L"\nTest:");
-   wchar_t expChar, outChar;
+   wchar_t expChar[34], outChar[34];
    bool isEqual = true;
    FILE* expOut = fopen ("ExpectedOutput.txt", "r, ccs=UTF-8"), * actOut = fopen ("ActualOut.txt", "r, ccs=UTF-8");
-   if (actOut && expOut) {
-      while ((fread (&expChar, sizeof (wchar_t), 1, expOut) && fread (&outChar, sizeof (wchar_t), 1, actOut)) == 1)
-         if (expChar != outChar) isEqual = false;
-      wprintf (isEqual ? L"Passed\n" : L"Failed\n");
-      fclose (actOut);
+   if (expOut) {
+      fgetws (expChar, 34, expOut);
       fclose (expOut);
+      if (actOut) {
+         fgetws (outChar, 34, actOut);
+         fclose (actOut);
+         wprintf (wcscmp (expChar, outChar) == 0 ? L"Passed\n" : L"Failed\n");
+      }
    }
 }
