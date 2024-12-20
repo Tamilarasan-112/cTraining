@@ -28,38 +28,28 @@ void main (int argc, char** argv) {
 
 State NextMealyState (State currentState, int input, int* output) {
    switch (currentState) {
-   case ST0:
-      return input ? S1 : T1; // Transition to S1 after '1' / T1 after '0'
+      case ST0:return input ? S1 : T1; // Transition to S1 after '1' / T1 after '0'
 
-   case S1:
-      return input ? S2 : T1; // Transition to S2 after '11' /  Stay in T1 after '0'
+      case S1:return input ? S2 : T1; // Transition to S2 after '11' /  Stay in T1 after '0'
 
-   case T1:
-      return input ? T2 : T1; // Transition to T2 after '01' / Stay in T1 after '0'
+      case T1:return input ? T2 : T1; // Transition to T2 after '01' / Stay in T1 after '0'
 
-   case S2:
-      return input ? S2 : S3; // Stay in S2 after '11' /  Transition to S3 after '110'
+      case S2:return input ? S2 : S3; // Stay in S2 after '11' /  Transition to S3 after '110'
 
-   case T2:
-      return input ? T3 : T1; // Transition to T3 after '011' / Stay in T1 after '0'
+      case T2:return input ? T3 : T1; // Transition to T3 after '011' / Stay in T1 after '0'
 
-   case S3:
-      *output = input; // Output '1' upon seeing '1101' / Output '0' upon seeing '1100'
-      return input ? S4 : T1;  // Move to S4 after recognizing '1101' / Stay in T1 after '0'
+      case S3:*output = input; // Output '1' upon seeing '1101' / Output '0' upon seeing '1100'
+         return input ? S4 : T1;  // Move to S4 after recognizing '1101' / Stay in T1 after '0'
 
-   case T3:
-      *output = !input; // Output '0' upon seeing '0111' / Output '1' upon seeing '0110'
-      return input ? S2 : T4;  // Transition to S2 after '11' / Move to T4 after recognizing '0110'
+      case T3:*output = !input; // Output '0' upon seeing '0111' / Output '1' upon seeing '0110'
+         return input ? S2 : T4;  // Transition to S2 after '11' / Move to T4 after recognizing '0110'
 
-   case S4:
-      return input ? T3 : T1; // Transition to T3 after '011' / Stay in T1 after '0'
+      case S4:return input ? T3 : T1; // Transition to T3 after '011' / Stay in T1 after '0'
 
-   case T4:
-      *output = input;  // Output '1' upon seeing '1101'
-      return input ? S4 : T1;  // Move to T4 after recognizing '1101'
+      case T4:*output = input;  // Output '1' upon seeing '1101'
+         return input ? S4 : T1;  // Move to T4 after recognizing '1101'
 
-   default:
-      return input ? S1 : T1;  // Default return to initial state
+      default:return input ? S1 : T1;  // Default return to initial state
    }
 }
 
