@@ -29,57 +29,51 @@ void main (int argc, char** argv) {
 State NextMealyState (State currentState, int input, int* output) {
    switch (currentState) {
    case ST0:
-      *output = 0;
       return input ? S1 : T1; // Transition to S1 after '1' / T1 after '0'
 
    case S1:
-      *output = 0;
       return input ? S2 : T1; // Transition to S2 after '11' /  Stay in T1 after '0'
 
    case T1:
-      *output = 0;
       return input ? T2 : T1; // Transition to T2 after '01' / Stay in T1 after '0'
 
    case S2:
-      *output = 0;
       return input ? S2 : S3; // Stay in S2 after '11' /  Transition to S3 after '110'
 
    case T2:
-      *output = 0;
       return input ? T3 : T1; // Transition to T3 after '011' / Stay in T1 after '0'
 
    case S3:
-      *output = input ? 1 : 0; // Output '1' upon seeing '1101' / Output '0' upon seeing '1100'
+      *output = input; // Output '1' upon seeing '1101' / Output '0' upon seeing '1100'
       return input ? S4 : T1;  // Move to S4 after recognizing '1101' / Stay in T1 after '0'
 
    case T3:
-      *output = input ? 0 : 1; // Output '0' upon seeing '0111' / Output '1' upon seeing '0110'
+      *output = !input; // Output '0' upon seeing '0111' / Output '1' upon seeing '0110'
       return input ? S2 : T4;  // Transition to S2 after '11' / Move to T4 after recognizing '0110'
 
    case S4:
-      *output = 0;
       return input ? T3 : T1; // Transition to T3 after '011' / Stay in T1 after '0'
 
    case T4:
-      *output = input ? 1 : 0;  // Output '1' upon seeing '1101'
+      *output = input;  // Output '1' upon seeing '1101'
       return input ? S4 : T1;  // Move to T4 after recognizing '1101'
 
    default:
-      *output = 0;
       return input ? S1 : T1;  // Default return to initial state
    }
 }
 
 void Mealy (char* inputFP, char* outputFP) {
-   char inputStream[18], outputStream[18];
    State currentState = ST0;
-   int input, output = 0, i = 0;
+   int input, i = 0;
+   char inputStream[18], outputStream[18]; //Assuming a sequence of characters with a size of 18.
    FILE* ipFile = fopen (inputFP, "r"), * opFile = fopen (outputFP, "w");
    if (ipFile) {
       fgets (inputStream, 18, ipFile);
       fclose (ipFile);
       if (opFile) {
          while (i < 17) {
+            int output = 0;
             input = inputStream[i] - 48;
             if (input == 0 || input == 1) {
                currentState = NextMealyState (currentState, input, &output);

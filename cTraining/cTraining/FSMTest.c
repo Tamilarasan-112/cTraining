@@ -5,43 +5,6 @@
 #include <string.h>
 
 /// <summary>This function will execute the FSM providing the input and output file names as arguments</summary>
-int ExecProgram (char* exeFilePathAndName, char* inputFilePathAndName, char* outputFilePathAndName);
-
-/// <summary>Test Harness</summary>
-int main (int argc, char** argv) {
-#define NTESTS 10
-   printf ("FSM Test Harness\n");
-   if (argc != 2) {
-      printf ("Usage: %s <%s>\n,", argv[0], argv[1]);
-      return -1;
-   }
-   char inputFile[20], expOutputFile[28], expOpStream[18], actOpStream[18];
-   for (int i = 1; i <= NTESTS; i++) {
-      sprintf (inputFile, "Inputfiles/ip%d.txt", i);
-      sprintf (expOutputFile, "Referencefiles/Exp-op%d.txt", i);
-      if (ExecProgram (argv[1], inputFile, "outputFile.txt")) printf ("Error executing test % d\n", i);
-      else {
-         int bitNo = 0;
-         FILE* exOpFile = fopen (expOutputFile, "r"), * outFile = fopen ("outputFile.txt", "r");
-         if (exOpFile) {
-            fgets (expOpStream, 18, exOpFile);
-            fclose (exOpFile);
-            if (outFile) {
-               fgets (actOpStream, 18, outFile);
-               fclose (outFile);
-               if(strcmp(expOpStream , actOpStream)==0) printf ("No error testing <%s>\n", inputFile);
-               else {
-                  while (bitNo < 17) {
-                     if (actOpStream[bitNo++] == expOpStream[bitNo]) continue;
-                     else printf ("Error Testing <%s> ,Error at bit no: <%d>, Expected: <%c>,Actual: <%c>\n", inputFile, bitNo, expOpStream[bitNo - 1], actOpStream[bitNo - 1]);
-                  }
-               }
-            }
-         }
-      }
-   }
-}
-
 int ExecProgram (char* exeFilePathAndName, char* inputFilePathAndName, char* outputFilePathAndName) {
    char* cmdline = malloc (strlen (exeFilePathAndName) + strlen (inputFilePathAndName) + strlen (outputFilePathAndName) + 3);
    if (cmdline == NULL) {
@@ -88,4 +51,40 @@ int ExecProgram (char* exeFilePathAndName, char* inputFilePathAndName, char* out
 
    free (cmdline);
    return 0;
+}
+
+/// <summary>Test Harness</summary>
+int main (int argc, char** argv) {
+#define NTESTS 10
+   printf ("FSM Test Harness\n");
+   if (argc != 2) {
+      printf ("Usage: %s <%s>\n,", argv[0], argv[1]);
+      return -1;
+   }
+   char inputFile[20], expOutputFile[28];
+   char expOpStream[18], actOpStream[18]; //Assuming a sequence of characters with a size of 18.
+   for (int i = 1; i <= NTESTS; i++) {
+      sprintf (inputFile, "Inputfiles/ip%d.txt", i);
+      sprintf (expOutputFile, "Referencefiles/Exp-op%d.txt", i);
+      if (ExecProgram (argv[1], inputFile, "outputFile.txt")) printf ("Error executing test % d\n", i);
+      else {
+         int bitNo = 0;
+         FILE* exOpFile = fopen (expOutputFile, "r"), * outFile = fopen ("outputFile.txt", "r");
+         if (exOpFile) {
+            fgets (expOpStream, 18, exOpFile);
+            fclose (exOpFile);
+            if (outFile) {
+               fgets (actOpStream, 18, outFile);
+               fclose (outFile);
+               if (strcmp (expOpStream, actOpStream) == 0) printf ("No error testing <%s>\n", inputFile);
+               else {
+                  while (bitNo < 17) {
+                     if (actOpStream[bitNo++] == expOpStream[bitNo]) continue;
+                     else printf ("Error Testing <%s> ,Error at bit no: <%d>, Expected: <%c>,Actual: <%c>\n", inputFile, bitNo, expOpStream[bitNo - 1], actOpStream[bitNo - 1]);
+                  }
+               }
+            }
+         }
+      }
+   }
 }
