@@ -75,7 +75,7 @@ int main (int argc, char** argv) {
             long int exOpLength = ftell (exOpFile), outLength = ftell (outFile);
             fseek (exOpFile, 0L, SEEK_SET);
             fseek (outFile, 0L, SEEK_SET);
-            char* expOpStream = malloc (exOpLength + 1 * sizeof (char)), * actOpStream = malloc (outLength + 1 * sizeof (char));
+            char* expOpStream = malloc ((exOpLength + 1) * sizeof (char)), * actOpStream = malloc ((outLength + 1) * sizeof (char));
             if (expOpStream && actOpStream) {
                fgets (expOpStream, exOpLength + 1, exOpFile);
                fclose (exOpFile);
