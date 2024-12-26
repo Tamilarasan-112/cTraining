@@ -8,6 +8,7 @@
 // ------------------------------------------------------------------------------------------------
 
 #include <stdio.h>
+#include <malloc.h>
 #pragma warning (disable:4996)
 #define _CRT_SECURE_NO_WARNINGS  1
 
@@ -23,7 +24,7 @@ void Mealy (char* inputFP, char* outputFP);
 State NextMealyState (State currentState, int input, int* output);
 
 void main (int argc, char** argv) {
-   Mealy (argv[1], argv[2]);
+   Mealy (argv[1],argv[2]);
 }
 
 State NextMealyState (State currentState, int input, int* output) {
@@ -56,23 +57,31 @@ State NextMealyState (State currentState, int input, int* output) {
 void Mealy (char* inputFP, char* outputFP) {
    State currentState = ST0;
    int input, i = 0;
-   char inputStream[18], outputStream[18]; //Assuming a sequence of characters with a size of 18.
-   FILE* ipFile = fopen (inputFP, "r"), * opFile = fopen (outputFP, "w");
-   if (ipFile) {
-      fgets (inputStream, 18, ipFile);
-      fclose (ipFile);
-      if (opFile) {
-         while (i < 17) {
+   FILE* ipFile = fopen (inputFP, "r"), *opFile = fopen (outputFP, "w");
+   if (ipFile && opFile) {
+      fseek (ipFile, 0L, SEEK_END);
+      fseek (opFile, 0L, SEEK_END);
+      long int ipLength = ftell (ipFile),opLength = ftell (opFile);
+      fseek (ipFile, 0L, SEEK_SET);
+      fseek (opFile, 0L, SEEK_SET);
+      char* inputStream = malloc ((ipLength+1) * sizeof (char)), * outputStream = malloc ((ipLength+1) * sizeof (char));
+      if (inputStream && outputStream) {
+         fgets (inputStream, ipLength + 1, ipFile);
+         while (i < ipLength) {
             int output = 0;
             input = inputStream[i] - 48;
             if (input == 0 || input == 1) {
                currentState = NextMealyState (currentState, input, &output);
-               outputStream[i++] = output + 48;
+               outputStream[i] = output + 48;
             }
+            i++;
          }
          outputStream[i] = '\0';
          fprintf (opFile, "%s", outputStream);
          fclose (opFile);
+         free (inputStream);
+         free (outputStream);
       }
+      fclose (ipFile);
    }
 }

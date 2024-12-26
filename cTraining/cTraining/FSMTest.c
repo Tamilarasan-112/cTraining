@@ -61,30 +61,40 @@ int main (int argc, char** argv) {
       printf ("Usage: %s <%s>\n,", argv[0], argv[1]);
       return -1;
    }
-   char inputFile[20], expOutputFile[28];
-   char expOpStream[18], actOpStream[18]; //Assuming a sequence of characters with a size of 18.
+   char inputFile[20], expOutputFile[28];//assuming the input and expected output file name length,20,28
    for (int i = 1; i <= NTESTS; i++) {
       sprintf (inputFile, "Inputfiles/ip%d.txt", i);
       sprintf (expOutputFile, "Referencefiles/Exp-op%d.txt", i);
-      if (ExecProgram (argv[1], inputFile, "outputFile.txt")) printf ("Error executing test % d\n", i);
+      if (ExecProgram (argv[1], inputFile, "outputFile.txt")) printf ("Error executing test %d\n", i);
       else {
          int bitNo = 0;
          FILE* exOpFile = fopen (expOutputFile, "r"), * outFile = fopen ("outputFile.txt", "r");
-         if (exOpFile) {
-            fgets (expOpStream, 18, exOpFile);
-            fclose (exOpFile);
-            if (outFile) {
-               fgets (actOpStream, 18, outFile);
+         if (exOpFile && outFile) {
+            fseek (exOpFile, 0L, SEEK_END);
+            fseek (outFile, 0L, SEEK_END);
+            long int exOpLength = ftell (exOpFile), outLength = ftell (outFile);
+            fseek (exOpFile, 0L, SEEK_SET);
+            fseek (outFile, 0L, SEEK_SET);
+            char* expOpStream = malloc (exOpLength + 1 * sizeof (char)), * actOpStream = malloc (outLength + 1 * sizeof (char));
+            if (expOpStream && actOpStream) {
+               fgets (expOpStream, exOpLength + 1, exOpFile);
+               fclose (exOpFile);
+               fgets (actOpStream, outLength + 1, outFile);
                fclose (outFile);
-               if (strcmp (expOpStream, actOpStream) == 0) printf ("No error testing <%s>\n", inputFile);
-               else {
-                  while (bitNo < 17) {
-                     if (actOpStream[bitNo++] == expOpStream[bitNo]) continue;
-                     else printf ("Error Testing <%s> ,Error at bit no: <%d>, Expected: <%c>,Actual: <%c>\n", inputFile, bitNo, expOpStream[bitNo - 1], actOpStream[bitNo - 1]);
+               if (strcmp (expOpStream, actOpStream) != 0) {
+                  while (bitNo < exOpLength) {
+                     if (actOpStream[bitNo++] != expOpStream[bitNo]) {
+                        printf ("Failed!\nTesting file <%s> ,Error at bit no: <%d>, Expected: <%c>,Actual: <%c>\n", inputFile, bitNo, expOpStream[bitNo - 1], actOpStream[bitNo - 1]);
+                        return 0;
+                     }
                   }
                }
+               free (expOpStream);
+               free (actOpStream);
             }
          }
       }
    }
+   printf ("Passed!");
+   return 1;
 }
