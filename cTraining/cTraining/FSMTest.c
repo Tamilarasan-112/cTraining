@@ -1,8 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS  1
-#include <windows.h>
-#include <stdio.h>
-#include <malloc.h>
-#include <string.h>
+#include "FSM.h";
 
 /// <summary>This function will execute the FSM providing the input and output file names as arguments</summary>
 int ExecProgram (char* exeFilePathAndName, char* inputFilePathAndName, char* outputFilePathAndName) {
