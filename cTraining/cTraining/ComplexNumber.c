@@ -12,8 +12,8 @@
 #include <conio.h>
 
 struct ComplexNumber {
-   float real;
-   float imagin;
+   float Real;
+   float Imaginary;
 };
 
 typedef struct ComplexNumber Complexop;
@@ -25,25 +25,25 @@ int AutomationTest ();
 void PrintOperationOutputs ();
 
 /// <summary>Add two complex numbers and return the result.</summary>
-Complexop Add (Complexop Op1, Complexop Op2);
+Complexop Add (Complexop op1, Complexop op2);
 
 /// <summary>Subtract two complex numbers and return the result.</summary>
-Complexop Sub (Complexop Op1, Complexop Op2);
+Complexop Sub (Complexop op1, Complexop op2);
 
 /// <summary>Perform the multiplication of two complex numbers and return the result.</summary>
-Complexop Multi (Complexop Op1, Complexop Op2);
+Complexop Multi (Complexop op1, Complexop op2);
 
 /// <summary>Compute the modulus of a complex number and return the result.</summary>
-float Mod (Complexop Op);
+float Mod (Complexop op);
 
 /// <summary>Compute the conjugate of the complex number and return the result.</summary>
-Complexop Conjugate (Complexop Op);
+Complexop Conjugate (Complexop op);
 
 /// <summary>Clear the buffered input data.</summary>
 void ClearInputBuffer ();
 
 /// <summary>Get the complex number from the user and return the operand.</summary>
-int GetInput (Complexop* Op);
+int GetInput (Complexop* op);
 
 /// <summary>Return true if input is valid,else false.</summary>
 bool IsValidInput (int ret, char c);
@@ -54,49 +54,41 @@ int main () {
 }
 
 
-Complexop Add (Complexop Op1, Complexop Op2) {
-   Complexop Result;
-   Result.real = Op1.real + Op2.real;
-   Result.imagin = Op1.imagin + Op2.imagin;
-   return Result;
+Complexop Add (Complexop op1, Complexop op2) {
+   Complexop result = { op1.Real + op2.Real,op1.Imaginary + op2.Imaginary };
+   return result;
 }
 
-Complexop Sub (Complexop Op1, Complexop Op2) {
-   Complexop Result;
-   Result.real = Op1.real - Op2.real;
-   Result.imagin = Op1.imagin - Op2.imagin;
-   return Result;
+Complexop Sub (Complexop op1, Complexop op2) {
+   Complexop result = { op1.Real - op2.Real , op1.Imaginary - op2.Imaginary };
+   return result;
 }
 
-Complexop Multi (Complexop Op1, Complexop Op2) {
-   Complexop Result;
-   Result.real = Op1.real * Op2.real - Op1.imagin * Op2.imagin;
-   Result.imagin = Op1.real * Op2.imagin + Op1.imagin * Op2.real;
-   return Result;
+Complexop Multi (Complexop op1, Complexop op2) {
+   Complexop result = { op1.Real * op2.Real - op1.Imaginary * op2.Imaginary,op1.Real * op2.Imaginary + op1.Imaginary * op2.Real };
+   return result;
 }
 
-float Mod (Complexop Op) {
-   float real = (float)pow (Op.real * Op.real + Op.imagin * Op.imagin, 0.5);
+float Mod (Complexop op) {
+   float real = (float)pow (op.Real * op.Real + op.Imaginary * op.Imaginary, 0.5);
    return real;
 }
 
-Complexop Conjugate (Complexop Op) {
-   Complexop Result;
-   Result.real = Op.real;
-   Result.imagin = -(Op.imagin);
-   return Result;
+Complexop Conjugate (Complexop op) {
+   Complexop result = { op.Real,-(op.Imaginary) };
+   return result;
 }
 
 void ClearInputBuffer () {
    while (getchar () != '\n');
 }
 
-int GetInput (Complexop* Op) {
+int GetInput (Complexop* op) {
    char c;
    printf ("Enter real number: ");
-   if (!IsValidInput (!scanf_s ("%f%c", &Op->real, &c, 1), c)) return 0;
+   if (!IsValidInput (!scanf_s ("%f%c", &op->Real, &c, 1), c)) return 0;
    printf ("Enter imaginary number: ");
-   if (!IsValidInput (!scanf_s ("%f%c", &Op->imagin, &c, 1), c)) return 0;
+   if (!IsValidInput (!scanf_s ("%f%c", &op->Imaginary, &c, 1), c)) return 0;
    return 1;
 }
 
@@ -118,44 +110,44 @@ void PrintOperationOutputs () {
       if (c == '0' || c == '1') {
          if (c == '0') break;
          else {
-            Complexop Op1;
-            Complexop Op2;
-            Complexop Result;
+            Complexop op1;
+            Complexop op2;
+            Complexop result;
             int ret;
             do {
                printf ("Complex number 1:\n");
-               ret = GetInput (&Op1);
+               ret = GetInput (&op1);
                if (!ret) printf ("Invalid complex number!\n");
                else break;
             } while (true);
             do {
                printf ("Complex number 2:\n");
-               ret = GetInput (&Op2);
+               ret = GetInput (&op2);
                if (!ret) printf ("Invalid complex number!\n");
                else break;
             } while (true);
 
-            Result = Add (Op1, Op2);
-            if (isinf (Result.real) || isinf (Result.imagin))printf ("The result exceeds float range!\n");
-            else printf ("Addition       :%f %fi\n", Result.real, Result.imagin);
-            Result = Sub (Op1, Op2);
-            if (isinf (Result.real) || isinf (Result.imagin))printf ("The result exceeds float range!\n");
-            else printf ("Subtraction   :%f %f\n", Result.real, Result.imagin);
-            Result = Multi (Op1, Op2);
-            if (isinf (Result.real) || isinf (Result.imagin))printf ("The result exceeds float range!\n");
-            else printf ("Multiplication:%f %f\n", Result.real, Result.imagin);
-            float output = Mod (Op1);
+            result = Add (op1, op2);
+            if (isinf (result.Real) || isinf (result.Imaginary))printf ("The result exceeds float range!\n");
+            else printf ("Addition       :%f %fi\n", result.Real, result.Imaginary);
+            result = Sub (op1, op2);
+            if (isinf (result.Real) || isinf (result.Imaginary))printf ("The result exceeds float range!\n");
+            else printf ("Subtraction   :%f %f\n", result.Real, result.Imaginary);
+            result = Multi (op1, op2);
+            if (isinf (result.Real) || isinf (result.Imaginary))printf ("The result exceeds float range!\n");
+            else printf ("Multiplication:%f %f\n", result.Real, result.Imaginary);
+            float output = Mod (op1);
             if (isinf (output))printf ("The result exceeds float range!.\n");
             else printf ("Modulus1       :%f\n", output);
-            output = Mod (Op2);
+            output = Mod (op2);
             if (isinf (output))printf ("The result exceeds float range!.\n");
             else printf ("Modulus2       :%f\n", output);
-            Result = Conjugate (Op1);
-            if (isinf (Result.real) || isinf (Result.imagin))printf ("The result exceeds float range!\n");
-            else printf ("Conjugate1     :%f %fi\n", Result.real, Result.imagin);
-            Result = Conjugate (Op2);
-            if (isinf (Result.real) || isinf (Result.imagin))printf ("The result exceeds float range!\n");
-            else printf ("Conjugate2     :%f %fi\n", Result.real, Result.imagin);
+            result = Conjugate (op1);
+            if (isinf (result.Real) || isinf (result.Imaginary))printf ("The result exceeds float range!\n");
+            else printf ("Conjugate1     :%f %fi\n", result.Real, result.Imaginary);
+            result = Conjugate (op2);
+            if (isinf (result.Real) || isinf (result.Imaginary))printf ("The result exceeds float range!\n");
+            else printf ("Conjugate2     :%f %fi\n", result.Real, result.Imaginary);
          }
       } else printf ("Invalid choice!\n");
    } while (true);
@@ -163,90 +155,90 @@ void PrintOperationOutputs () {
 
 int AutomationTest () {
    float op1Real[] = { 121.2324f,324.2334f,32.3324f,340000000000000000000000000000000000000.00f,0.000000000000000000000000000000000000034f };
-   float op1Imagin[] = { -324.00f,-3423.00f,-34.00f,340000000000000000000000000000000000000.00f,0.000000000000000000000000000000000000034f };
+   float op1Imaginary[] = { -324.00f,-3423.00f,-34.00f,340000000000000000000000000000000000000.00f,0.000000000000000000000000000000000000034f };
    float op2Real[] = { 23.00f,324.00f,32.324f,-340000000000000000000000000000000000000.00f,0.000000000000000000000000000000000000034f };
-   float op2Imagin[] = { 534.345f,435.43f,4353.00f,340000000000000000000000000000000000000.00f,0.000000000000000000000000000000000000034f };
+   float op2Imaginary[] = { 534.345f,435.43f,4353.00f,340000000000000000000000000000000000000.00f,0.000000000000000000000000000000000000034f };
 
-   float expRealAdd[] = { 144.23f,648.23f,64.66f,1.0f,0.0f }, expImaginAdd[] = { 210.35f ,-2987.57f,4319.00f,1.0f,0.0f };
-   float expRealSub[] = { 98.23f,0.23f,0.01f,1.0f,0.0f }, expImaginSub[] = { -858.35f,-3858.43f,-4387.00f,1.0f,0.0f };
-   float expRealMulti[] = { 175916.13f,1595528.51f,149047.11f,1.0f,0.0f }, expImaginMulti[] = { 57327.93f,-967871.05f,139643.92f,1.0f,0.0f };
-   float expImaginMod1[] = { 345.94f,3438.32f,46.92f,1.0f,0.0f }, expImaginMod2[] = { 534.84f,542.75f,4353.12f,1.0f,0.0f };
-   float expConjImagin1[] = { 324.00f,3423.00f,34.00f,-340000000000000000000000000000000000000.00f,-0.000000000000000000000000000000000000034f };
-   float expConjImagin2[] = { -534.345f,-435.43f,-4353.00f,-340000000000000000000000000000000000000.00f,-0.000000000000000000000000000000000000034f };
+   float expRealAdd[] = { 144.23f,648.23f,64.66f,1.0f,0.0f }, expImaginaryAdd[] = { 210.35f ,-2987.57f,4319.00f,1.0f,0.0f };
+   float expRealSub[] = { 98.23f,0.23f,0.01f,1.0f,0.0f }, expImaginarySub[] = { -858.35f,-3858.43f,-4387.00f,1.0f,0.0f };
+   float expRealMulti[] = { 175916.13f,1595528.51f,149047.11f,1.0f,0.0f }, expImaginaryMulti[] = { 57327.93f,-967871.05f,139643.92f,1.0f,0.0f };
+   float expImaginaryMod1[] = { 345.94f,3438.32f,46.92f,1.0f,0.0f }, expImaginaryMod2[] = { 534.84f,542.75f,4353.12f,1.0f,0.0f };
+   float expConjImaginary1[] = { 324.00f,3423.00f,34.00f,-340000000000000000000000000000000000000.00f,-0.000000000000000000000000000000000000034f };
+   float expConjImaginary2[] = { -534.345f,-435.43f,-4353.00f,-340000000000000000000000000000000000000.00f,-0.000000000000000000000000000000000000034f };
 
-   Complexop Op1;
-   Complexop Op2;
-   Complexop Result;
+   Complexop op1;
+   Complexop op2;
+   Complexop result;
 
    printf ("\nTest Cases:");
    for (int i = 0; i < 5; i++) {
-      Op1.real = op1Real[i];
-      Op1.imagin = op1Imagin[i];
-      Op2.real = op2Real[i];
-      Op2.imagin = op2Imagin[i];
+      op1.Real = op1Real[i];
+      op1.Imaginary = op1Imaginary[i];
+      op2.Real = op2Real[i];
+      op2.Imaginary = op2Imaginary[i];
 
-      Result = Add (Op1, Op2);
-      bool ret = isinf (Result.real) || isinf (Result.imagin);
+      result = Add (op1, op2);
+      bool ret = isinf (result.Real) || isinf (result.Imaginary);
       if (!ret) {
-         if (round (Result.real) != round (expRealAdd[i]) || round (Result.imagin) != round (expImaginAdd[i])) {
-            printf ("Addition Failed!\nComplex number1:\nInput real number:%f\nInput imaginary number:%f\n", op1Real[i], op1Imagin[i]);
-            printf ("Complex number2:\nInput real number:%f\nInput imaginary number:%f\n", op2Real[i], op2Imagin[i]);
+         if (round (result.Real) != round (expRealAdd[i]) || round (result.Imaginary) != round (expImaginaryAdd[i])) {
+            printf ("Addition failed!\nComplex number1:\nInput real number:%f\nInput imaginary number:%f\n", op1Real[i], op1Imaginary[i]);
+            printf ("Complex number2:\nInput real number:%f\nInput imaginary number:%f\n", op2Real[i], op2Imaginary[i]);
             return 0;
          }
       }
 
-      Result = Sub (Op1, Op2);
-      ret = isinf (Result.real) || isinf (Result.imagin);
+      result = Sub (op1, op2);
+      ret = isinf (result.Real) || isinf (result.Imaginary);
       if (!ret) {
-         if (round (Result.real) != round (expRealSub[i]) || round (Result.imagin) != round (expImaginSub[i])) {
-            printf ("Subtraction Failed!\nComplex number1:\nInput real number:%f\nInput imaginary number:%f\n", op1Real[i], op1Imagin[i]);
-            printf ("Complex number2:\nInput real number:%f\nInput imaginary number:%f\n", op2Real[i], op2Imagin[i]);
+         if (round (result.Real) != round (expRealSub[i]) || round (result.Imaginary) != round (expImaginarySub[i])) {
+            printf ("Subtraction failed!\nComplex number1:\nInput real number:%f\nInput imaginary number:%f\n", op1Real[i], op1Imaginary[i]);
+            printf ("Complex number2:\nInput real number:%f\nInput imaginary number:%f\n", op2Real[i], op2Imaginary[i]);
             return 0;
          }
       }
 
-      Result = Multi (Op1, Op2);
-      ret = isinf (Result.real) || isinf (Result.imagin);
+      result = Multi (op1, op2);
+      ret = isinf (result.Real) || isinf (result.Imaginary);
       if (!ret) {
-         if (round (Result.real) != round (expRealMulti[i]) || round (Result.imagin) != round (expImaginMulti[i])) {
-            printf ("Multiplication Failed!\nComplex number1:\nInput real number:%f\nInput imaginary number:%f\n", op1Real[i], op1Imagin[i]);
-            printf ("Complex number2:\nInput real number:%f\nInput imaginary number:%f\n", op2Real[i], op2Imagin[i]);
+         if (round (result.Real) != round (expRealMulti[i]) || round (result.Imaginary) != round (expImaginaryMulti[i])) {
+            printf ("Multiplication failed!\nComplex number1:\nInput real number:%f\nInput imaginary number:%f\n", op1Real[i], op1Imaginary[i]);
+            printf ("Complex number2:\nInput real number:%f\nInput imaginary number:%f\n", op2Real[i], op2Imaginary[i]);
             return 0;
          }
       }
 
-      float output = Mod (Op1);
+      float output = Mod (op1);
       ret = isinf (output);
       if (!ret) {
-         if (round (output) != round (expImaginMod1[i])) {
-            printf ("Modulus Failed!\nComplex number:\nInput real number:%f\nInput imaginary number:%f\n", op1Real[i], op1Imagin[i]);
+         if (round (output) != round (expImaginaryMod1[i])) {
+            printf ("Modulus failed!\nComplex number:\nInput real number:%f\nInput imaginary number:%f\n", op1Real[i], op1Imaginary[i]);
             return 0;
          }
       }
 
-      float output1 = Mod (Op2);
+      float output1 = Mod (op2);
       ret = isinf (output1);
       if (!ret) {
-         if (round (output1) != round (expImaginMod2[i])) {
-            printf ("Modulus Failed!\nComplex number:\nInput real number:%f\nInput imaginary number:%f\n", op2Real[i], op2Imagin[i]);
+         if (round (output1) != round (expImaginaryMod2[i])) {
+            printf ("Modulus failed!\nComplex number:\nInput real number:%f\nInput imaginary number:%f\n", op2Real[i], op2Imaginary[i]);
             return 0;
          }
       }
 
-      Result = Conjugate (Op1);
-      ret = isinf (Result.real) || isinf (Result.imagin);
+      result = Conjugate (op1);
+      ret = isinf (result.Real) || isinf (result.Imaginary);
       if (!ret) {
-         if (round (Result.real) != round (op1Real[i]) || round (Result.imagin) != round (expConjImagin1[i])) {
-            printf ("Conjugate Failed!\nComplex number:\nInput real number:%f\nInput imaginary number:%f\n", op1Real[i], op1Imagin[i]);
+         if (round (result.Real) != round (op1Real[i]) || round (result.Imaginary) != round (expConjImaginary1[i])) {
+            printf ("Conjugate failed!\nComplex number:\nInput real number:%f\nInput imaginary number:%f\n", op1Real[i], op1Imaginary[i]);
             return 0;
          }
       }
 
-      Result = Conjugate (Op2);
-      ret = isinf (Result.real) || isinf (Result.imagin);
+      result = Conjugate (op2);
+      ret = isinf (result.Real) || isinf (result.Imaginary);
       if (!ret) {
-         if (round (Result.real) != round (op2Real[i]) || round (Result.imagin) != round (expConjImagin2[i])) {
-            printf ("Conjugate Failed!\nComplex number:\nInput real number:%f\nInput imaginary number:%f\n", op2Real[i], op2Imagin[i]);
+         if (round (result.Real) != round (op2Real[i]) || round (result.Imaginary) != round (expConjImaginary2[i])) {
+            printf ("Conjugate failed!\nComplex number:\nInput real number:%f\nInput imaginary number:%f\n", op2Real[i], op2Imaginary[i]);
             return 0;
          }
       }
