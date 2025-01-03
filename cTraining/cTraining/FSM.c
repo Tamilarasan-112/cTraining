@@ -7,13 +7,14 @@
 // Program on main branch.
 // ------------------------------------------------------------------------------------------------
 
-#include "FSM.h";
+#include "FSM.h"
 
 void main (int argc, char** argv) {
    Mealy (argv[1], argv[2]);
 }
 
 State NextMealyState (State currentState, int input, int* output) {
+   *output = 0;
    switch (currentState) {
    case ST0:return input ? S1 : T1; // Transition to S1 after '1' / T1 after '0'
 
@@ -36,13 +37,13 @@ State NextMealyState (State currentState, int input, int* output) {
    case T4:*output = input;  // Output '1' upon seeing '1101'
       return input ? S4 : T1;  // Move to T4 after recognizing '1101'
 
-   default:return input ? S1 : T1;  // Default return to initial state
+   default:return ERRORST;  // Default return to initial state
    }
 }
 
 void Mealy (char* inputFP, char* outputFP) {
    State currentState = ST0;
-   int input, i = 0;
+   int input, i, output;
    FILE* ipFile = fopen (inputFP, "r"), * opFile = fopen (outputFP, "w");
    if (ipFile && opFile) {
       fseek (ipFile, 0L, SEEK_END);
@@ -53,14 +54,16 @@ void Mealy (char* inputFP, char* outputFP) {
       char* inputStream = malloc ((ipLength + 1) * sizeof (char)), * outputStream = malloc ((ipLength + 1) * sizeof (char));
       if (inputStream && outputStream) {
          fgets (inputStream, ipLength + 1, ipFile);
-         while (i < ipLength) {
-            int output = 0;
+         for (i = 0; i < ipLength; i++) {
             input = inputStream[i] - 48;
             if (input == 0 || input == 1) {
                currentState = NextMealyState (currentState, input, &output);
+               if (currentState == ERRORST) {
+                  printf ("ERROR STATE!\n");
+                  break;
+               }
                outputStream[i] = output + 48;
             }
-            i++;
          }
          outputStream[i] = '\0';
          fprintf (opFile, "%s", outputStream);

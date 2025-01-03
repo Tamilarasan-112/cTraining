@@ -1,4 +1,4 @@
-#include "FSM.h";
+#include "FSM.h"
 
 /// <summary>This function will execute the FSM providing the input and output file names as arguments</summary>
 int ExecProgram (char* exeFilePathAndName, char* inputFilePathAndName, char* outputFilePathAndName) {
@@ -63,7 +63,6 @@ int main (int argc, char** argv) {
       sprintf (expOutputFile, "Referencefiles/Exp-op%d.txt", i);
       if (ExecProgram (argv[1], inputFile, "outputFile.txt")) printf ("Error executing test %d\n", i);
       else {
-         int bitNo = 0;
          FILE* exOpFile = fopen (expOutputFile, "r"), * outFile = fopen ("outputFile.txt", "r");
          if (exOpFile && outFile) {
             fseek (exOpFile, 0L, SEEK_END);
@@ -78,9 +77,9 @@ int main (int argc, char** argv) {
                fgets (actOpStream, outLength + 1, outFile);
                fclose (outFile);
                if (strcmp (expOpStream, actOpStream) != 0) {
-                  while (bitNo < exOpLength) {
-                     if (actOpStream[bitNo++] != expOpStream[bitNo]) {
-                        printf ("Failed!\nTesting file <%s> ,Error at bit no: <%d>, Expected: <%c>,Actual: <%c>\n", inputFile, bitNo, expOpStream[bitNo - 1], actOpStream[bitNo - 1]);
+                  for (int bitNo = 0; bitNo < exOpLength; bitNo++) {
+                     if (actOpStream[bitNo] != expOpStream[bitNo]) {
+                        printf ("Failed!\nTesting file <%s> ,Error at bit no: <%d>, Expected: <%c>,Actual: <%c>\n", inputFile, bitNo + 1, expOpStream[bitNo], actOpStream[bitNo]);
                         return 0;
                      }
                   }

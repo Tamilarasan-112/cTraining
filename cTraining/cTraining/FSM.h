@@ -11,7 +11,7 @@
 
 // Define states of the Mealy machine
 typedef enum {
-   ST0, S1, S2, S3, S4, T1, T2, T3, T4
+   ST0, S1, S2, S3, S4, T1, T2, T3, T4, ERRORST
 } State;
 
 /// <summary>Mealy machine that detects the pattern '0110' or '1101' in an input stream and write the output.</summary>
