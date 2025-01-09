@@ -16,7 +16,7 @@
 #pragma warning(disable : 4996)
 
 /// <summary>Display the board.</summary>
-void InitBoard (char board[][ROWCOUNT + 1]);
+void InitBoard (char board[][ROWCOUNT]);
 
 /// <summary>Get the input from the player.</summary>
 void Input (int* player);
@@ -25,10 +25,10 @@ void Input (int* player);
 /// <param name="player">Player input</param>
 /// <param name="board">Contains Board data</param>
 /// <param name="sym">Player symbol</param>
-int MarkSymbols (int player, char board[][ROWCOUNT + 1], char sym);
+int MarkSymbols (int cellNumber, char board[][ROWCOUNT], char sym);
 
 /// <summary>Return 1 ,if the any one of the player is win,else return 0.</summary>
-int CheckWin (char board[][ROWCOUNT + 1], char sym);
+int CheckWin (char board[][ROWCOUNT], char sym);
 
 /// <summary>To manually test all the methods.</summary>
 void StartGame ();
@@ -37,10 +37,10 @@ void StartGame ();
 int AutomationTest ();
 
 /// <summary>To test the MarkSymbols method.</summary>
-int TestMarkSymbols (int input[], char expOut[][ROWCOUNT + 1]);
+int TestMarkSymbols (int input[], char expOut[][ROWCOUNT]);
 
 /// <summary>Test the CheckWin method.</summary>
-int TestCheckWin (char board[][ROWCOUNT + 1], char sym, int exp);
+int TestCheckWin (char board[][ROWCOUNT], char sym, int exp);
 
 /// <summary>Display the integer array.</summary>
 void DisplayArray (int arr[]);
@@ -50,9 +50,9 @@ int main () {
    //AutomationTest ();
 }
 
-int MarkSymbols (int player, char board[][ROWCOUNT + 1], char sym) {
-   int row = player <= 3 ? 0 : player <= 6 ? 1 : 2;
-   int col = player <= 3 ? player - 1 : player <= 6 ? player - 4 : player - 7;
+int MarkSymbols (int cellNumber, char board[][ROWCOUNT], char sym) {
+   int row = cellNumber <= 3 ? 0 : cellNumber <= 6 ? 1 : 2;
+   int col = cellNumber <= 3 ? cellNumber - 1 : cellNumber <= 6 ? cellNumber - 4 : cellNumber - 7;
    if (isdigit (board[row][col])) {
       board[row][col] = sym;
       return 1;
@@ -60,7 +60,7 @@ int MarkSymbols (int player, char board[][ROWCOUNT + 1], char sym) {
    return 0;
 }
 
-int CheckWin (char board[][ROWCOUNT + 1], char sym) {
+int CheckWin (char board[][ROWCOUNT], char sym) {
    for (int i = 0; i < ROWCOUNT; i++) {
       //checking columns and rows
       if ((board[i][0] == sym && board[i][1] == sym && board[i][2] == sym) ||
@@ -74,11 +74,12 @@ int CheckWin (char board[][ROWCOUNT + 1], char sym) {
    return 0;
 }
 
-void InitBoard (char board[][ROWCOUNT + 1]) {
+void InitBoard (char board[][ROWCOUNT]) {
    printf ("\n");
    for (int i = 0; i < ROWCOUNT; i++) {
-      for (int j = 0; j < ROWCOUNT + 1; j++)
+      for (int j = 0; j < ROWCOUNT; j++)
          printf ("|%c", board[i][j]);
+      printf ("|\n");
    }
 }
 
@@ -92,16 +93,16 @@ void Input (int* player) {
 
 void StartGame () {
    printf ("\nPlayers can enter a number between 1 to 9.\nPlayer 1's symbol is 'O'\nPlayer 2's symbol is 'X'\n");
-   char board[][ROWCOUNT + 1] = { { '1','2','3','\n' },{ '4','5','6','\n' },{ '7','8','9','\n' } }, sym;
-   int player, it = 0, ret, i = 0;
+   char board[][ROWCOUNT] = { { '1','2','3' },{ '4','5','6' },{ '7','8','9' } }, sym;
+   int cellNumber, it = 0, ret, i = 0;
    InitBoard (board);
    while (true) {
       sym = i ? 'X' : 'O';
       it++;
       do {
          printf ("\nPlayer%d:", i + 1);
-         Input (&player);
-         ret = MarkSymbols (player, board, sym);
+         Input (&cellNumber);
+         ret = MarkSymbols (cellNumber, board, sym);
          if (!ret) printf ("Position is occupied!\n");
       } while (!ret);
       InitBoard (board);
@@ -123,17 +124,17 @@ void StartGame () {
 int AutomationTest () {
    int input1[] = { 1,2,3,4,5,6,7,8,9 }, input2[] = { 2,3,1,4,6,8,7,5,9 };
    int input3[] = { 1,2,2,1,3,4,3,5,6 };
-   char expOut1[][ROWCOUNT + 1] = { { 'O','X','O','\n' },{ 'X','O','X','\n' },{ 'O','X','O','\n' } };
-   char expOut2[][ROWCOUNT + 1] = { { 'O','O','X','\n' },{ 'X','X','O','\n' },{ 'O','X','O','\n' } };
-   char expOut3[][ROWCOUNT + 1] = { {'O','X','O','\n' },{ 'X','X','O','\n' },{ '7','8','9','\n' } };
+   char expOut1[][ROWCOUNT] = { { 'O','X','O' },{ 'X','O','X' },{ 'O','X','O' } };
+   char expOut2[][ROWCOUNT] = { { 'O','O','X' },{ 'X','X','O' },{ 'O','X','O' } };
+   char expOut3[][ROWCOUNT] = { {'O','X','O' },{ 'X','X','O' },{ '7','8','9' } };
    if (!TestMarkSymbols (input1, expOut1) || !TestMarkSymbols (input2, expOut2) || !TestMarkSymbols (input3, expOut3)) return 0;
    if (!TestCheckWin (expOut1, 'O', 1) || !TestCheckWin (expOut2, 'X', 0) || !TestCheckWin (expOut3, 'O', 0)) return 0;
    printf ("Test cases: Passed!\n");
    return 1;
 }
 
-int TestMarkSymbols (int input[], char expOut[][ROWCOUNT + 1]) {
-   char board[][ROWCOUNT + 1] = { { '1','2','3','\n' },{ '4','5','6','\n' },{ '7','8','9','\n' } }, sym;
+int TestMarkSymbols (int input[], char expOut[][ROWCOUNT]) {
+   char board[][ROWCOUNT] = { { '1','2','3' },{ '4','5','6' },{ '7','8','9' } }, sym;
    for (int i = 0, j = 0; i < ROWCOLUMNCOUNT; i++) {
       sym = j++ ? 'X' : 'O';
       MarkSymbols (input[i], board, sym);
@@ -150,7 +151,7 @@ int TestMarkSymbols (int input[], char expOut[][ROWCOUNT + 1]) {
    return 1;
 }
 
-int TestCheckWin (char board[][ROWCOUNT + 1], char sym, int exp) {
+int TestCheckWin (char board[][ROWCOUNT], char sym, int exp) {
    if (CheckWin (board, sym) != exp) {
       printf ("\nTest CheckWin method: Failed!\nAt input: ");
       InitBoard (board);
