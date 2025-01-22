@@ -10,7 +10,8 @@
 #include <stdbool.h>
 #include <cType.h>
 #include <conio.h>
-#define ROWCOLUMNCOUNT 9 //Assuming a 3x3 matrix.
+#include <malloc.h>
+#define MAXCELLS 9 //Assuming a 3x3 matrix.
 #define ROWCOUNT 3 //Number of rows: it's a cubic matrix, so the number of rows equals the number of columns.
 
 #pragma warning(disable : 4996)
@@ -37,13 +38,13 @@ void StartGame ();
 int AutomationTest ();
 
 /// <summary>To test the MarkSymbols method.</summary>
-int TestMarkSymbols (int input[], char expOut[][ROWCOUNT]);
+int TestMarkSymbols (char* input, char* expOut);
 
 /// <summary>Test the CheckWin method.</summary>
-int TestCheckWin (char board[][ROWCOUNT], char sym, int exp);
+int TestCheckWin (char* bord, char sym, int exp);
 
-/// <summary>Display the integer array.</summary>
-void DisplayArray (int arr[]);
+/// <summary>Display the character array.</summary>
+void DisplayArray (char* arr);
 
 int main () {
    StartGame ();
@@ -94,11 +95,11 @@ void Input (int* player) {
 void StartGame () {
    printf ("\nPlayers can enter a number between 1 to 9.\nPlayer 1's symbol is 'O'\nPlayer 2's symbol is 'X'\n");
    char board[][ROWCOUNT] = { { '1','2','3' },{ '4','5','6' },{ '7','8','9' } }, sym;
-   int cellNumber, it = 0, ret, i = 0;
+   int cellNumber, cellsOccupied = 0, ret, i = 0;
    InitBoard (board);
    while (true) {
       sym = i ? 'X' : 'O';
-      it++;
+      cellsOccupied++;
       do {
          printf ("\nPlayer%d:", i + 1);
          Input (&cellNumber);
@@ -106,61 +107,115 @@ void StartGame () {
          if (!ret) printf ("Position is occupied!\n");
       } while (!ret);
       InitBoard (board);
-      if (it >= 5) {
+      if (cellsOccupied >= 5) {
          ret = CheckWin (board, sym);
          if (ret) {
             printf ("\nPlayer%d is win\n", i + 1);
             break;
-         } else if (it == ROWCOLUMNCOUNT) {
+         } else if (cellsOccupied == MAXCELLS) {
             printf ("\nMatch draw!");
             break;
          }
       }
-      i++;
-      if (i > 1) i = 0;
+      i = !i;
    }
 }
 
 int AutomationTest () {
-   int input1[] = { 1,2,3,4,5,6,7,8,9 }, input2[] = { 2,3,1,4,6,8,7,5,9 };
-   int input3[] = { 1,2,2,1,3,4,3,5,6 };
-   char expOut1[][ROWCOUNT] = { { 'O','X','O' },{ 'X','O','X' },{ 'O','X','O' } };
-   char expOut2[][ROWCOUNT] = { { 'O','O','X' },{ 'X','X','O' },{ 'O','X','O' } };
-   char expOut3[][ROWCOUNT] = { {'O','X','O' },{ 'X','X','O' },{ '7','8','9' } };
-   if (!TestMarkSymbols (input1, expOut1) || !TestMarkSymbols (input2, expOut2) || !TestMarkSymbols (input3, expOut3)) return 0;
-   if (!TestCheckWin (expOut1, 'O', 1) || !TestCheckWin (expOut2, 'X', 0) || !TestCheckWin (expOut3, 'O', 0)) return 0;
-   printf ("Test cases: Passed!\n");
-   return 1;
-}
-
-int TestMarkSymbols (int input[], char expOut[][ROWCOUNT]) {
-   char board[][ROWCOUNT] = { { '1','2','3' },{ '4','5','6' },{ '7','8','9' } }, sym;
-   for (int i = 0, j = 0; i < ROWCOLUMNCOUNT; i++) {
-      sym = j++ ? 'X' : 'O';
-      MarkSymbols (input[i], board, sym);
-      if (j > 1) j = 0;
-   }
-   for (int i = 0; i < ROWCOUNT; i++) {
-      for (int j = 0; j < ROWCOUNT; j++)
-         if (board[i][j] != expOut[i][j]) {
-            printf ("Test MarkSymbol method: Failed!\nAt input: ");
-            DisplayArray (input);
-            return 0;
+#define NTEST 3
+   char inputFP[14], expOutFP[16]; //assuming the file name length 13 and 15
+   FILE* inputsCheckWin = fopen ("Input/IpSym.txt", "r"), * expWin = fopen ("ExpOut/ExpWin.txt", "r");
+   if (inputsCheckWin && expWin) {
+      fseek (inputsCheckWin, 0L, SEEK_END);
+      fseek (expWin, 0L, SEEK_END);
+      int ipLength = ftell (inputsCheckWin), opLength = ftell (expWin);
+      fseek (inputsCheckWin, 0L, SEEK_SET);
+      fseek (expWin, 0L, SEEK_SET);
+      char* inputStream = malloc ((ipLength + 1) * sizeof (char));
+      char* outputStream = malloc ((opLength + 1) * sizeof (char));
+      if (inputStream && outputStream) {
+         fgets (inputStream, ipLength + 1, inputsCheckWin);
+         fgets (outputStream, opLength + 1, expWin);
+         for (int i = 0; i < NTEST; i++) {
+            sprintf (inputFP, "Input/Ip%d.txt", i + 1);
+            sprintf (expOutFP, "ExpOut/EOp%d.txt", i + 1);
+            FILE* inputFile = fopen (inputFP, "r"), * outputFile = fopen (expOutFP, "r");
+            if (inputFile && outputFile) {
+               fseek (inputFile, 0L, SEEK_END);
+               fseek (outputFile, 0L, SEEK_END);
+               int ipLength1 = ftell (inputFile), opLength1 = ftell (outputFile);
+               fseek (inputFile, 0L, SEEK_SET);
+               fseek (outputFile, 0L, SEEK_SET);
+               char* inputStream1 = malloc ((ipLength1 + 1) * sizeof (char));
+               char* outputStream1 = malloc ((opLength1 + 1) * sizeof (char));
+               if (inputStream1 && outputStream1) {
+                  fgets (inputStream1, ipLength1 + 1, inputFile);
+                  fgets (outputStream1, opLength1 + 1, outputFile);
+                  if (!TestMarkSymbols (inputStream1, outputStream1)) {
+                     printf ("Test MarkSymbol method: Failed!\nAt input: ");
+                     DisplayArray (inputStream1);
+                     return 0;
+                  }
+                  if (!TestCheckWin (outputStream1, inputStream[i], outputStream[i] - '0')) {
+                     printf ("Test CheckWin method: Failed!\nAt input as above board and symbol: % c", inputStream[i]);
+                     return 0;
+                  }
+                  fclose (inputFile);
+                  fclose (outputFile);
+                  free (inputStream1);
+                  free (outputStream1);
+               } else {
+                  printf ("\nTest failed!,due to memory allocation is failed!...\n");
+                  return 0;
+               }
+            } else {
+               printf ("\nTest failed!,when file handling...\n");
+               return 0;
+            }
          }
+         fclose (inputsCheckWin);
+         fclose (expWin);
+         free (inputStream);
+         free (outputStream);
+      } else {
+         printf ("\nTest failed!,due to memory allocation is failed!...\n");
+         return 0;
+      }
+   } else {
+      printf ("\nTest failed!,when file handling...\n");
+      return 0;
+   }
+   printf ("\nPassed!\n");
+   return 1;
+}
+
+int TestMarkSymbols (char* input, char* expOut) {
+   char board[][ROWCOUNT] = { { '1','2','3' },{ '4','5','6' },{ '7','8','9' } }, sym;
+   for (int i = 0, j = 0; i < MAXCELLS; i++, j = !j) {
+      sym = j ? 'X' : 'O';
+      MarkSymbols (input[i] - '0', board, sym);
+   }
+   for (int i = 0, k = 0; i < ROWCOUNT; i++) {
+      for (int j = 0; j < ROWCOUNT; j++)
+         if (board[i][j] != expOut[k++]) return 0;
    }
    return 1;
 }
 
-int TestCheckWin (char board[][ROWCOUNT], char sym, int exp) {
-   if (CheckWin (board, sym) != exp) {
-      printf ("\nTest CheckWin method: Failed!\nAt input: ");
-      InitBoard (board);
+int TestCheckWin (char* board, char sym, int exp) {
+   char input[ROWCOUNT][ROWCOUNT];
+   for (int i = 0, k = 0; i < ROWCOUNT; i++) {
+      for (int j = 0; j < ROWCOUNT; j++)
+         input[i][j] = board[k++];
+   }
+   if (CheckWin (input, sym) != exp) {
+      InitBoard (input);
       return 0;
    }
    return 1;
 }
 
-void DisplayArray (int arr[]) {
-   for (int i = 0; i < ROWCOLUMNCOUNT; i++)
-      printf ("%d ", arr[i]);
+void DisplayArray (char* arr) {
+   for (int i = 0; i < MAXCELLS; i++)
+      printf ("%c ", arr[i]);
 }
